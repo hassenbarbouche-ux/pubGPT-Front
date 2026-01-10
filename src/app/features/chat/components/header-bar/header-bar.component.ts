@@ -25,7 +25,10 @@ export class HeaderBarComponent {
   @Input() confidenceLevel: string | null = null;
   @Input() executionTime: number | null = null;
   @Input() hasSql: boolean = false;
-  @Input() userAccess: string = 'FULL ACCESS';
+  @Input() userAccess: string = 'Full Access';
+  @Input() tokenUsagePercent: number = 37;
+  @Input() requestCount: number | null = null;
+  @Input() accuracy: number | null = null;
 
   @Output() sqlClick = new EventEmitter<void>();
   @Output() emailClick = new EventEmitter<void>();
@@ -52,6 +55,16 @@ export class HeaderBarComponent {
     return this.executionTime < 1000
       ? `${this.executionTime}ms`
       : `${(this.executionTime / 1000).toFixed(1)}s`;
+  }
+
+  getTokenUsageMessage(): string {
+    return `Vous avez utilisé ${this.tokenUsagePercent}% de vos tokens`;
+  }
+
+  getTokenBarColor(): string {
+    if (this.tokenUsagePercent >= 80) return '#f44336'; // Red
+    if (this.tokenUsagePercent >= 50) return '#ff9800'; // Orange
+    return '#4caf50'; // Green
   }
 
   onSqlClick(): void {

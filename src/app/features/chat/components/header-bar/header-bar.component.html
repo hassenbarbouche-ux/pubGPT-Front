@@ -1,33 +1,45 @@
-<mat-toolbar color="primary" class="header-bar">
-  <div class="header-content">
-    <!-- Privilège utilisateur -->
-    <mat-chip class="access-chip" [highlighted]="true">
-      <mat-icon>verified_user</mat-icon>
-      {{ userAccess }}
-    </mat-chip>
+<div class="header-bar">
+  <div class="header-top">
+    <div class="header-left">
+      <!-- Menu hamburger -->
+      <button mat-icon-button class="menu-button">
+        <mat-icon>menu</mat-icon>
+      </button>
 
-    <span class="spacer"></span>
+      <!-- Full Access Badge -->
+      <div class="access-badge">
+        {{ userAccess }}
+      </div>
 
-    <!-- Score de confiance -->
-    <mat-chip *ngIf="confidenceScore !== null" [color]="getConfidenceColor()" class="confidence-chip">
-      <mat-icon>psychology</mat-icon>
-      Confiance: {{ confidenceScore }}% ({{ getConfidenceLevelText() }})
-    </mat-chip>
+      <!-- Token Usage Message -->
+      <div class="token-message">
+        {{ getTokenUsageMessage() }}
+      </div>
+    </div>
 
-    <!-- Bouton SQL -->
-    <button mat-icon-button (click)="onSqlClick()" [disabled]="!hasSql" matTooltip="Voir la requête SQL">
-      <mat-icon [color]="hasSql ? 'accent' : 'disabled'">code</mat-icon>
-    </button>
+    <div class="header-right">
+      <!-- Request Badge -->
+      <div class="metric-badge" *ngIf="requestCount !== null">
+        <mat-icon>description</mat-icon>
+        <span>Request</span>
+      </div>
 
-    <!-- Temps d'exécution -->
-    <mat-chip *ngIf="executionTime !== null" class="time-chip">
-      <mat-icon>schedule</mat-icon>
-      {{ formatExecutionTime() }}
-    </mat-chip>
+      <!-- Accuracy Badge -->
+      <div class="metric-badge" *ngIf="accuracy !== null">
+        <mat-icon>target</mat-icon>
+        <span>Accuracy = {{ accuracy }}%</span>
+      </div>
 
-    <!-- Bouton Email -->
-    <button mat-icon-button (click)="onEmailClick()" matTooltip="Envoyer par email">
-      <mat-icon>email</mat-icon>
-    </button>
+      <!-- Time Badge -->
+      <div class="metric-badge" *ngIf="executionTime !== null">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ formatExecutionTime() }}</span>
+      </div>
+    </div>
   </div>
-</mat-toolbar>
+
+  <!-- Token Usage Bar -->
+  <div class="token-bar-container">
+    <div class="token-bar" [style.width.%]="tokenUsagePercent" [style.background-color]="getTokenBarColor()"></div>
+  </div>
+</div>

@@ -5,6 +5,9 @@
     [confidenceLevel]="lastResponse?.metadata?.confidenceLevel ?? null"
     [executionTime]="lastResponse?.metadata?.executionTimeMs ?? null"
     [hasSql]="!!lastResponse?.generatedSql"
+    [tokenUsagePercent]="37"
+    [requestCount]="null"
+    [accuracy]="lastResponse?.metadata?.confidenceScore ?? null"
     (sqlClick)="onSqlClick()"
     (emailClick)="onEmailClick()">
   </app-header-bar>

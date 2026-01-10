@@ -20,6 +20,7 @@ export class JsonTableComponent implements OnInit {
   @Input() data: any[] = [];
 
   displayedColumns: string[] = [];
+  displayedColumnsWithRowNumber: string[] = [];
   tableData: any[] = [];
   displayedData: any[] = [];
   visibleData: any[] = [];
@@ -66,6 +67,7 @@ export class JsonTableComponent implements OnInit {
       });
 
       this.displayedColumns = Array.from(allKeys);
+      this.displayedColumnsWithRowNumber = ['rowNumber', ...this.displayedColumns];
     }
   }
 
@@ -132,12 +134,19 @@ export class JsonTableComponent implements OnInit {
   }
 
   /**
-   * Télécharge les données complètes au format Excel
-   * TODO: Implémenter la génération Excel réelle
+   * Retourne le numéro de ligne pour l'affichage
    */
-  downloadExcel(): void {
+  getRowNumber(index: number): number {
+    return index + 1;
+  }
+
+  /**
+   * Télécharge les données complètes au format CSV
+   * TODO: Implémenter la génération CSV réelle
+   */
+  downloadCSV(): void {
     // Pour l'instant, c'est un lien factice
-    console.log('Téléchargement Excel à implémenter - Total rows:', this.tableData.length);
-    // TODO: Générer un vrai fichier Excel avec toutes les données
+    console.log('Téléchargement CSV à implémenter - Total rows:', this.tableData.length);
+    // TODO: Générer un vrai fichier CSV avec toutes les données
   }
 }

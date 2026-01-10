@@ -27,6 +27,18 @@
   }
 }
 
+.mic-button {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+  color: #424242;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
 .send-button {
   flex-shrink: 0;
   margin-bottom: 4px;

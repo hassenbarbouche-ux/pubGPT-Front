@@ -1,26 +1,33 @@
 <div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'">
-  <mat-card class="message-bubble">
-    <mat-card-content>
-      <!-- Contenu du message -->
-      <div class="message-content" [innerHTML]="message.content"></div>
+  <!-- Avatar -->
+  <div class="message-avatar" *ngIf="message.role === 'user'">
+    <mat-icon class="avatar-icon">account_circle</mat-icon>
+  </div>
 
-      <!-- Tableau JSON (si des données JSON sont présentes) -->
-      <app-json-table *ngIf="message.hasJsonData && message.jsonData" [data]="message.jsonData"></app-json-table>
+  <div class="message-content-wrapper">
+    <mat-card class="message-bubble">
+      <mat-card-content>
+        <!-- Contenu du message -->
+        <div class="message-content" [innerHTML]="message.content"></div>
 
-      <!-- Étapes de streaming (affichées pendant le traitement) -->
-      <div class="streaming-steps" *ngIf="message.isStreaming && message.streamingSteps && message.streamingSteps.length > 0">
-        <mat-chip-set>
-          <mat-chip *ngFor="let step of message.streamingSteps" class="step-chip">
-            <mat-spinner diameter="16" *ngIf="step === message.streamingSteps[message.streamingSteps.length - 1]"></mat-spinner>
-            {{ step }}
-          </mat-chip>
-        </mat-chip-set>
-      </div>
+        <!-- Tableau JSON (si des données JSON sont présentes) -->
+        <app-json-table *ngIf="message.hasJsonData && message.jsonData" [data]="message.jsonData"></app-json-table>
 
-      <!-- Timestamp -->
-      <div class="message-timestamp">
-        {{ message.timestamp | date:'HH:mm' }}
-      </div>
-    </mat-card-content>
-  </mat-card>
+        <!-- Étapes de streaming (affichées pendant le traitement) -->
+        <div class="streaming-steps" *ngIf="message.isStreaming && message.streamingSteps && message.streamingSteps.length > 0">
+          <mat-chip-set>
+            <mat-chip *ngFor="let step of message.streamingSteps" class="step-chip">
+              <mat-spinner diameter="16" *ngIf="step === message.streamingSteps[message.streamingSteps.length - 1]"></mat-spinner>
+              {{ step }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- Timestamp -->
+        <div class="message-timestamp">
+          {{ message.timestamp | date:'HH:mm' }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

@@ -1,41 +1,76 @@
 .header-bar {
+  background-color: white;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header-content {
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+}
+
+.header-left {
   display: flex;
   align-items: center;
-  width: 100%;
+  gap: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 
-.spacer {
-  flex: 1;
+.menu-button {
+  color: #424242;
 }
 
-.access-chip {
-  background-color: rgba(255, 255, 255, 0.2);
+.access-badge {
+  background-color: #dc3545;
   color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.token-message {
+  color: #424242;
+  font-size: 0.875rem;
+}
+
+.metric-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #424242;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
 
   mat-icon {
-    color: white;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 
-.confidence-chip,
-.time-chip {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
-
-  mat-icon {
-    color: white;
-  }
+.token-bar-container {
+  height: 4px;
+  background-color: #e0e0e0;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-button {
-  color: white;
+.token-bar {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }

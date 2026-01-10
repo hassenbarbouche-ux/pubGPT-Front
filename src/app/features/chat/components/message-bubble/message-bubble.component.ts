@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import { ChatMessage } from '../../../../core/models';
 import { JsonTableComponent } from '../json-table/json-table.component';
 
@@ -14,6 +15,7 @@ import { JsonTableComponent } from '../json-table/json-table.component';
     MatCardModule,
     MatChipsModule,
     MatProgressSpinnerModule,
+    MatIconModule,
     JsonTableComponent
   ],
   templateUrl: './message-bubble.component.html',
