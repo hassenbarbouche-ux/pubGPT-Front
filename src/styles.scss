@@ -1,0 +1,44 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Import Material theme with blue prebuilt theme
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+// Variables de couleurs globales
+:root {
+  --primary-blue: #42A5F5;
+  --light-blue: #E3F2FD;
+  --dark-blue: #1976D2;
+  --user-bubble: #DCF8C6;
+  --bot-bubble: #F5F5F5;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #FAFAFA;
+}
+
+// Scrollbar personnalisé
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

@@ -1,0 +1,41 @@
+.header-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.access-chip {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 500;
+
+  mat-icon {
+    color: white;
+  }
+}
+
+.confidence-chip,
+.time-chip {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+
+  mat-icon {
+    color: white;
+  }
+}
+
+button {
+  color: white;
+}

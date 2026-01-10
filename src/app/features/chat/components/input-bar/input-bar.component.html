@@ -1,0 +1,27 @@
+<div class="input-bar-container">
+  <mat-form-field appearance="outline" class="question-input">
+    <mat-label>Posez votre question...</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="question"
+      (keypress)="onKeyPress($event)"
+      [disabled]="disabled"
+      rows="1"
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="1"
+      cdkAutosizeMaxRows="5"
+      placeholder="Ex: Quel est le CA investi par Peugeot pour la 208 en 2024?"
+    ></textarea>
+  </mat-form-field>
+
+  <button
+    mat-fab
+    color="primary"
+    (click)="onSend()"
+    [disabled]="!question.trim() || disabled"
+    class="send-button"
+  >
+    <mat-icon>send</mat-icon>
+  </button>
+</div>

@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" class="header-bar">
+  <div class="header-content">
+    <!-- Privilège utilisateur -->
+    <mat-chip class="access-chip" [highlighted]="true">
+      <mat-icon>verified_user</mat-icon>
+      {{ userAccess }}
+    </mat-chip>
+
+    <span class="spacer"></span>
+
+    <!-- Score de confiance -->
+    <mat-chip *ngIf="confidenceScore !== null" [color]="getConfidenceColor()" class="confidence-chip">
+      <mat-icon>psychology</mat-icon>
+      Confiance: {{ confidenceScore }}% ({{ getConfidenceLevelText() }})
+    </mat-chip>
+
+    <!-- Bouton SQL -->
+    <button mat-icon-button (click)="onSqlClick()" [disabled]="!hasSql" matTooltip="Voir la requête SQL">
+      <mat-icon [color]="hasSql ? 'accent' : 'disabled'">code</mat-icon>
+    </button>
+
+    <!-- Temps d'exécution -->
+    <mat-chip *ngIf="executionTime !== null" class="time-chip">
+      <mat-icon>schedule</mat-icon>
+      {{ formatExecutionTime() }}
+    </mat-chip>
+
+    <!-- Bouton Email -->
+    <button mat-icon-button (click)="onEmailClick()" matTooltip="Envoyer par email">
+      <mat-icon>email</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

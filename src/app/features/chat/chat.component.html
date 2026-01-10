@@ -1,0 +1,20 @@
+<div class="chat-container">
+  <!-- Header avec infos -->
+  <app-header-bar
+    [confidenceScore]="lastResponse?.metadata?.confidenceScore ?? null"
+    [confidenceLevel]="lastResponse?.metadata?.confidenceLevel ?? null"
+    [executionTime]="lastResponse?.metadata?.executionTimeMs ?? null"
+    [hasSql]="!!lastResponse?.generatedSql"
+    (sqlClick)="onSqlClick()"
+    (emailClick)="onEmailClick()">
+  </app-header-bar>
+
+  <!-- Liste des messages -->
+  <app-message-list [messages]="messages"></app-message-list>
+
+  <!-- Barre d'input -->
+  <app-input-bar
+    [disabled]="isProcessing"
+    (sendMessage)="onSendMessage($event)">
+  </app-input-bar>
+</div>

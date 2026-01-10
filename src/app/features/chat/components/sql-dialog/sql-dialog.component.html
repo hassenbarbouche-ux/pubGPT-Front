@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>
+  <mat-icon>code</mat-icon>
+  Requête SQL générée
+</h2>
+
+<mat-dialog-content>
+  <div class="sql-info" *ngIf="data.tables && data.tables.length > 0">
+    <p><strong>Tables utilisées:</strong> {{ data.tables.join(', ') }}</p>
+  </div>
+
+  <div class="sql-info" *ngIf="data.executionTime">
+    <p><strong>Temps d'exécution:</strong> {{ data.executionTime < 1000 ? data.executionTime + 'ms' : (data.executionTime / 1000).toFixed(1) + 's' }}</p>
+  </div>
+
+  <div class="sql-code-container">
+    <pre><code>{{ data.sql }}</code></pre>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">
+    <mat-icon>close</mat-icon>
+    Fermer
+  </button>
+  <button mat-raised-button color="primary" (click)="copyToClipboard()" matTooltip="Copier dans le presse-papiers">
+    <mat-icon>content_copy</mat-icon>
+    Copier
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,107 @@
+.json-table-card {
+  margin: 12px 0;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.json-table {
+  width: 100%;
+  background-color: white;
+
+  th {
+    background-color: var(--primary-blue);
+    color: white;
+    font-weight: 500;
+    padding: 12px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    color: var(--text-primary);
+  }
+
+  tr:hover {
+    background-color: var(--light-blue);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.collapse-section {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+
+  .collapse-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    color: var(--primary-blue);
+    text-transform: none;
+
+    &:hover {
+      background-color: var(--light-blue);
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.result-count {
+  margin-top: 12px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: right;
+  border-top: 1px solid #e0e0e0;
+}
+
+.excel-download {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  .download-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    color: #1976D2;
+    text-transform: none;
+
+    &:hover {
+      background-color: var(--light-blue);
+    }
+
+    .excel-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #217346; // Couleur verte Excel
+    }
+
+    span {
+      font-weight: 400;
+    }
+  }
+}
