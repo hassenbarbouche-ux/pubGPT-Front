@@ -2,11 +2,11 @@
   display: flex;
   gap: 12px;
   margin: 16px 24px;
-  animation: fadeIn 0.3s ease-in;
 
   &.user-message {
     flex-direction: row;
     align-items: flex-start;
+    animation: fadeIn 0.3s ease-in;
 
     .message-bubble {
       background-color: #000000;
@@ -26,6 +26,7 @@
   &.bot-message {
     flex-direction: row;
     align-items: flex-start;
+    animation: slideDown 0.5s ease-out;
 
     .message-bubble {
       background-color: white;
@@ -115,6 +116,19 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
   }
 }
 
