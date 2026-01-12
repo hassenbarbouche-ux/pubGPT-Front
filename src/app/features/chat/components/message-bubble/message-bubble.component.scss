@@ -26,7 +26,7 @@
   &.bot-message {
     flex-direction: row;
     align-items: flex-start;
-    animation: slideDown 0.5s ease-out;
+    animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 
     .message-bubble {
       background-color: white;
@@ -120,15 +120,20 @@
 }
 
 @keyframes slideDown {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(-20px);
-    max-height: 0;
+    transform: translateY(-40px) scale(0.95);
+    filter: blur(4px);
   }
-  to {
+  40% {
+    opacity: 0.6;
+    transform: translateY(-15px) scale(0.98);
+    filter: blur(2px);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
-    max-height: 1000px;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
