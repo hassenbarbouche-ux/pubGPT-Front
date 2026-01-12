@@ -1,4 +1,4 @@
-<div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'">
+<div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'" [@slideDown]="message.role === 'assistant'">
   <!-- Avatar -->
   <div class="message-avatar" *ngIf="message.role === 'user'">
     <mat-icon class="avatar-icon">account_circle</mat-icon>
