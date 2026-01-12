@@ -23,4 +23,15 @@ import { JsonTableComponent } from '../json-table/json-table.component';
 })
 export class MessageBubbleComponent {
   @Input() message!: ChatMessage;
+
+  /**
+   * Retourne uniquement la dernière étape de streaming
+   * Pour afficher une seule étape à la fois (comme ChatGPT)
+   */
+  getCurrentStep(): string | null {
+    if (!this.message.streamingSteps || this.message.streamingSteps.length === 0) {
+      return null;
+    }
+    return this.message.streamingSteps[this.message.streamingSteps.length - 1];
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +20,7 @@ import { MatBadgeModule } from '@angular/material/badge';
   templateUrl: './header-bar.component.html',
   styleUrl: './header-bar.component.scss'
 })
-export class HeaderBarComponent {
+export class HeaderBarComponent implements OnChanges {
   @Input() confidenceScore: number | null = null;
   @Input() confidenceLevel: string | null = null;
   @Input() executionTime: number | null = null;
@@ -29,9 +29,17 @@ export class HeaderBarComponent {
   @Input() tokenUsagePercent: number = 37;
   @Input() requestCount: number | null = null;
   @Input() accuracy: number | null = null;
+  @Input() sqlQuery: string | null = null;
+  @Input() sqlTables: string[] = [];
+  @Input() sqlExecutionTime: number | null = null;
 
   @Output() sqlClick = new EventEmitter<void>();
   @Output() emailClick = new EventEmitter<void>();
+  @Output() menuClick = new EventEmitter<void>();
+
+  showAccuracyTooltip: boolean = false;
+  showSqlTooltip: boolean = false;
+  private previousAccuracy: number | null = null;
 
   getConfidenceColor(): string {
     if (!this.confidenceScore) return 'accent';
@@ -62,18 +70,59 @@ export class HeaderBarComponent {
   }
 
   getTokenBarColor(): string {
-    if (this.tokenUsagePercent >= 80) return '#f44336'; // Red
-    if (this.tokenUsagePercent >= 50) return '#ff9800'; // Orange
-    return '#4caf50'; // Green
+    if (this.tokenUsagePercent >= 80) return '#000000'; // Black
+    if (this.tokenUsagePercent >= 50) return '#4A4A4A'; // Dark gray
+    return '#2F2F2F'; // Medium gray
   }
 
   onSqlClick(): void {
-    if (this.hasSql) {
-      this.sqlClick.emit();
+    if (this.hasSql && this.sqlQuery) {
+      this.showSqlTooltip = !this.showSqlTooltip;
+    }
+  }
+
+  copySqlToClipboard(): void {
+    if (this.sqlQuery) {
+      navigator.clipboard.writeText(this.sqlQuery).then(() => {
+        console.log('SQL copié dans le presse-papiers');
+      });
     }
   }
 
   onEmailClick(): void {
     this.emailClick.emit();
+  }
+
+  onMenuClick(): void {
+    this.menuClick.emit();
+  }
+
+  ngOnChanges(): void {
+    // Détecter quand accuracy change et afficher la bulle
+    if (this.accuracy !== null && this.accuracy !== this.previousAccuracy) {
+      this.showAccuracyTooltip = true;
+      this.previousAccuracy = this.accuracy;
+
+      // Cacher la bulle après 5 secondes
+      setTimeout(() => {
+        this.showAccuracyTooltip = false;
+      }, 5000);
+    }
+  }
+
+  getAccuracySmiley(): string {
+    if (!this.accuracy) return '😐';
+    if (this.accuracy >= 80) return '😊';
+    if (this.accuracy >= 60) return '🙂';
+    if (this.accuracy >= 40) return '😐';
+    return '😕';
+  }
+
+  getAccuracyMessage(): string {
+    if (!this.accuracy) return 'Aucune donnée disponible';
+    if (this.accuracy >= 80) return 'Excellente précision ! Vous pouvez faire confiance à ce résultat.';
+    if (this.accuracy >= 60) return 'Bonne précision. Le résultat est fiable.';
+    if (this.accuracy >= 40) return 'Précision moyenne. Vérifiez les résultats importants.';
+    return 'Précision faible. Soyez prudent avec ce résultat.';
   }
 }

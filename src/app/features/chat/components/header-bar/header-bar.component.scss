@@ -1,9 +1,12 @@
 .header-bar {
-  background-color: white;
+  background-color: #FFFFFF;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
+  margin: 0;
+  border-radius: 0;
 }
 
 .header-top {
@@ -29,48 +32,292 @@
   color: #424242;
 }
 
+.access-token-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .access-badge {
-  background-color: #dc3545;
+  background-color: #000000;
   color: white;
   padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.token-usage-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .token-message {
   color: #424242;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.token-bar-container {
+  height: 6px;
+  background-color: #E5E5E5;
+  width: 280px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.token-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .metric-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: #424242;
+  background-color: #000000;
   color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #2F2F2F;
+  }
 
   mat-icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
   }
+
+  .sql-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  span {
+    font-weight: 500;
+  }
 }
 
-.token-bar-container {
-  height: 4px;
-  background-color: #e0e0e0;
-  width: 100%;
+.accuracy-container {
   position: relative;
-  overflow: hidden;
+
+  &:hover .accuracy-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
-.token-bar {
-  height: 100%;
-  transition: width 0.3s ease, background-color 0.3s ease;
+.accuracy-tooltip {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000000;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  min-width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .tooltip-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #FFFFFF;
+
+    .tooltip-smiley {
+      font-size: 24px;
+    }
+
+    .tooltip-message {
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 400;
+      color: #FFFFFF;
+    }
+  }
+
+  .tooltip-arrow {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #000000;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.sql-container {
+  position: relative;
+}
+
+.sql-tooltip {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000000;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  min-width: 500px;
+  max-width: 700px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .tooltip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333333;
+
+    .tooltip-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .tooltip-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #FFFFFF;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #CCCCCC;
+      }
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .sql-info {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background-color: #1E1E1E;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #CCCCCC;
+
+    strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+  }
+
+  .sql-code-container {
+    background-color: #1E1E1E;
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    max-height: 300px;
+    margin-bottom: 12px;
+
+    pre {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+
+      code {
+        color: #D4D4D4;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    }
+  }
+
+  .tooltip-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .tooltip-button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #2F2F2F;
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #3F3F3F;
+      }
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .tooltip-arrow {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #000000;
+  }
 }

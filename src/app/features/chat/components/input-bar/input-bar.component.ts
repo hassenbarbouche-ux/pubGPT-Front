@@ -24,12 +24,17 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 })
 export class InputBarComponent {
   @Input() disabled: boolean = false;
+  @Input() maxMessagesReached: boolean = false;
   @Output() sendMessage = new EventEmitter<string>();
 
   question: string = '';
 
+  get isInputDisabled(): boolean {
+    return this.disabled || this.maxMessagesReached;
+  }
+
   onSend(): void {
-    if (this.question.trim() && !this.disabled) {
+    if (this.question.trim() && !this.isInputDisabled) {
       this.sendMessage.emit(this.question.trim());
       this.question = '';
     }

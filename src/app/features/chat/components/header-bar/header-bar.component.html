@@ -2,44 +2,87 @@
   <div class="header-top">
     <div class="header-left">
       <!-- Menu hamburger -->
-      <button mat-icon-button class="menu-button">
+      <button mat-icon-button class="menu-button" (click)="onMenuClick()">
         <mat-icon>menu</mat-icon>
       </button>
 
-      <!-- Full Access Badge -->
-      <div class="access-badge">
-        {{ userAccess }}
-      </div>
+      <!-- Full Access et Token Usage -->
+      <!-- <div class="access-token-section">
+        <div class="access-badge">
+          {{ userAccess }}
+        </div>
 
-      <!-- Token Usage Message -->
-      <div class="token-message">
-        {{ getTokenUsageMessage() }}
-      </div>
+        <div class="token-usage-wrapper">
+          <div class="token-message">
+            {{ getTokenUsageMessage() }}
+          </div>
+          <div class="token-bar-container">
+            <div class="token-bar" [style.width.%]="tokenUsagePercent" [style.background-color]="getTokenBarColor()"></div>
+          </div>
+        </div>
+      </div> -->
     </div>
 
     <div class="header-right">
-      <!-- Request Badge -->
-      <div class="metric-badge" *ngIf="requestCount !== null">
-        <mat-icon>description</mat-icon>
-        <span>Request</span>
+      <!-- SQL Badge -->
+      <div class="metric-badge sql-container" (click)="onSqlClick()">
+        <svg class="sql-icon" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFFFFF" d="M155,229.5c0.3,0,0.7,0.1,1,0.1h74.3c8.7,0,15.7-7.1,15.7-15.7V41.6c0-8.7-7.1-15.7-15.7-15.7H156c-0.3,0-0.7,0-1,0.1V5.3L10,24.7v206.2l145,19.9V229.5z M155,34.9c0.3-0.1,0.7-0.1,1-0.1h74.3c3.7,0,6.8,3,6.8,6.8v172.2c0,3.7-3,6.8-6.8,6.8H156c-0.3,0-0.7-0.1-1-0.1V34.9z M33.4,142.7c-4.9-0.1-9.7-1.6-12-3.1l1.9-8.5c2.6,1.5,6.6,3,10.7,3.1c4.5,0.1,6.9-1.9,6.9-4.9c0-2.9-2.1-4.6-7.3-6.6c-7.1-2.7-11.7-6.9-11.7-13.6c0-7.8,6-13.9,16.2-14.2c4.9-0.1,8.6,0.9,11.3,2.1l-2.3,8.6c-1.8-0.9-4.9-2.2-9.2-2.1c-4.3,0.1-6.3,2.2-6.3,4.6c0,3,2.4,4.2,8,6.5c7.8,3,11.5,7.4,11.5,14C51.1,136.5,45.4,143,33.4,142.7z M98.7,152.3c-7-2.3-12.8-4.6-19.2-7.5c-1.1-0.5-2.2-0.7-3.3-0.8c-10.5-1-20.2-9.1-20.2-24.7c0-14.2,8.7-25.2,22.7-25.6c14.8-0.4,23.1,10.9,23.1,24.6c0,11.3-5.2,19.2-11.7,22v0.3c3.8,1.2,8,2.2,11.9,3.1L98.7,152.3z M141.9,144.8l-32.7-0.8V93.7l11.6-0.3v41.2l21.1,0.3L141.9,144.8L141.9,144.8z"/>
+          <path fill="#FFFFFF" d="M78.4,102.5c-7.3,0.1-11.4,7.5-11.4,16.4c-0.1,9.1,4.2,16.2,11.3,16.3c7.3,0.1,11.6-6.9,11.6-16.5C89.9,109.7,85.7,102.3,78.4,102.5z"/>
+        </svg>
+        <span>SQL</span>
+
+        <!-- Bulle SQL -->
+        <div class="sql-tooltip" [class.visible]="showSqlTooltip">
+          <div class="tooltip-header">
+            <span class="tooltip-title">Requête SQL générée</span>
+            <button class="tooltip-close" (click)="showSqlTooltip = false; $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+          <div class="sql-info" *ngIf="sqlTables && sqlTables.length > 0">
+            <strong>Tables utilisées:</strong> {{ sqlTables.join(', ') }}
+          </div>
+
+          <div class="sql-info" *ngIf="sqlExecutionTime">
+            <strong>Temps d'exécution:</strong> {{ sqlExecutionTime < 1000 ? sqlExecutionTime + 'ms' : (sqlExecutionTime / 1000).toFixed(1) + 's' }}
+          </div>
+
+          <div class="sql-code-container">
+            <pre><code>{{ sqlQuery }}</code></pre>
+          </div>
+
+          <div class="tooltip-actions">
+            <button class="tooltip-button" (click)="copySqlToClipboard(); $event.stopPropagation()">
+              <mat-icon>content_copy</mat-icon>
+              <span>Copier</span>
+            </button>
+          </div>
+
+          <div class="tooltip-arrow"></div>
+        </div>
       </div>
 
       <!-- Accuracy Badge -->
-      <div class="metric-badge" *ngIf="accuracy !== null">
-        <mat-icon>target</mat-icon>
-        <span>Accuracy = {{ accuracy }}%</span>
+      <div class="metric-badge accuracy-container">
+        <span>Accuracy = {{ accuracy !== null ? accuracy : null }}%</span>
+
+        <!-- Bulle d'information -->
+        <div class="accuracy-tooltip" [class.visible]="showAccuracyTooltip">
+          <div class="tooltip-content">
+            <span class="tooltip-smiley">{{ getAccuracySmiley() }}</span>
+            <span class="tooltip-message">{{ getAccuracyMessage() }}</span>
+          </div>
+          <div class="tooltip-arrow"></div>
+        </div>
       </div>
 
       <!-- Time Badge -->
-      <div class="metric-badge" *ngIf="executionTime !== null">
+      <div class="metric-badge">
         <mat-icon>schedule</mat-icon>
-        <span>{{ formatExecutionTime() }}</span>
+        <span>{{ executionTime !== null ? formatExecutionTime() : '--s' }}</span>
       </div>
     </div>
-  </div>
-
-  <!-- Token Usage Bar -->
-  <div class="token-bar-container">
-    <div class="token-bar" [style.width.%]="tokenUsagePercent" [style.background-color]="getTokenBarColor()"></div>
   </div>
 </div>

@@ -3,15 +3,16 @@
 // Import Material theme with blue prebuilt theme
 @import '@angular/material/prebuilt-themes/azure-blue.css';
 
-// Variables de couleurs globales
+// Variables de couleurs globales - Thème ChatGPT
 :root {
-  --primary-blue: #42A5F5;
-  --light-blue: #E3F2FD;
-  --dark-blue: #1976D2;
-  --user-bubble: #DCF8C6;
-  --bot-bubble: #F5F5F5;
+  --primary-black: #2F2F2F;
+  --light-gray: #F7F7F8;
+  --dark-black: #000000;
+  --user-bubble: #F7F7F8;
+  --bot-bubble: #FFFFFF;
   --text-primary: #212121;
-  --text-secondary: #757575;
+  --text-secondary: #6E6E80;
+  --border-color: #E5E5E5;
 }
 
 html, body {

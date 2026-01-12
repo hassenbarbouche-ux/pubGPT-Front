@@ -1,20 +1,44 @@
 <div #scrollContainer class="message-list-container">
   <div class="messages">
-    <app-message-bubble
-      *ngFor="let message of messages; trackBy: trackByMessageId"
-      [message]="message">
-    </app-message-bubble>
+    <ng-container *ngFor="let message of messages; let i = index; trackBy: trackByMessageId">
+      <!-- Message bubble -->
+      <app-message-bubble [message]="message"></app-message-bubble>
+
+      <!-- Étapes de streaming (affichées après le message utilisateur) -->
+      <div class="streaming-step-container" *ngIf="message.role === 'user' && isNextMessageStreaming(i)">
+        <div class="streaming-step-indicator">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="step-text">{{ getNextMessageCurrentStep(i) }}</span>
+        </div>
+      </div>
+    </ng-container>
 
     <!-- Message d'accueil si aucun message -->
     <div class="welcome-message" *ngIf="messages.length === 0">
-      <h2>Bienvenue sur pubGPT</h2>
-      <p>Posez vos questions sur les données publicitaires TV</p>
-      <p class="examples">Exemples:</p>
-      <ul>
-        <li>Quel est le CA investi par Peugeot pour la 208 en 2024?</li>
-        <li>Combien de campagnes ont été diffusées ce mois-ci?</li>
-        <li>Quelles chaînes sont les plus utilisées?</li>
-      </ul>
+      <video class="background-video" [src]="backgroundVideo" autoplay muted loop playsinline></video>
+      <div class="welcome-overlay">
+        <h1 class="welcome-title">PUBGPT</h1>
+        <div class="welcome-content">
+          <p class="welcome-subtitle">pubGPT vous aide à répondre à vos questions sur la publicité TV :</p>
+          <ul class="welcome-list">
+            <li>interroger les données (diffusions, campagnes, chaînes...)</li>
+            <li>comprendre comment utiliser les outils de la régie (Puma, Dexter, Extranet...)</li>
+            <li>clarifier les règles et notions du métier de la pub TV</li>
+          </ul>
+          <p class="welcome-footer">Posez simplement votre question, pubGPT s'occupe du reste.</p>
+
+          <p class="examples-title">Exemples :</p>
+          <ul class="examples-list">
+            <li *ngFor="let example of examples" (click)="onExampleClick(example)">
+              {{ example }}
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>

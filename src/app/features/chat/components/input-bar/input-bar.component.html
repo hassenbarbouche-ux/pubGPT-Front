@@ -1,36 +1,37 @@
-<div class="input-bar-container">
-  <mat-form-field appearance="outline" class="question-input">
-    <mat-label>Posez votre question...</mat-label>
-    <textarea
-      matInput
-      [(ngModel)]="question"
-      (keypress)="onKeyPress($event)"
-      [disabled]="disabled"
-      rows="1"
-      cdkTextareaAutosize
-      #autosize="cdkTextareaAutosize"
-      cdkAutosizeMinRows="1"
-      cdkAutosizeMaxRows="5"
-      placeholder="Ex: Quel est le CA investi par Peugeot pour la 208 en 2024?"
-    ></textarea>
-  </mat-form-field>
+<div class="input-bar-wrapper">
+  <!-- Message d'erreur limite atteinte -->
+  <div class="max-messages-warning" *ngIf="maxMessagesReached">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <span>Limite de conversation atteinte. Veuillez démarrer une nouvelle conversation pour continuer.</span>
+  </div>
 
-  <button
-    mat-icon-button
-    color="accent"
-    class="mic-button"
-    matTooltip="Enregistrement vocal"
-  >
-    <mat-icon>mic</mat-icon>
-  </button>
+  <div class="input-bar-container">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        class="question-input"
+        [(ngModel)]="question"
+        (keypress)="onKeyPress($event)"
+        [disabled]="isInputDisabled"
+        placeholder="Posez votre question"
+      />
+      <button
+        mat-icon-button
+        class="mic-button"
+        matTooltip="Enregistrement vocal"
+        [disabled]="isInputDisabled"
+      >
+        <mat-icon>mic</mat-icon>
+      </button>
+    </div>
 
-  <button
-    mat-fab
-    color="primary"
-    (click)="onSend()"
-    [disabled]="!question.trim() || disabled"
-    class="send-button"
-  >
-    <mat-icon>send</mat-icon>
-  </button>
+    <button
+      mat-icon-button
+      (click)="onSend()"
+      [disabled]="!question.trim() || isInputDisabled"
+      class="send-button"
+    >
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
 </div>

@@ -5,23 +5,14 @@
   </div>
 
   <div class="message-content-wrapper">
-    <mat-card class="message-bubble">
+    <!-- N'afficher la bulle que si elle a du contenu ou si c'est un message user -->
+    <mat-card class="message-bubble" *ngIf="message.role === 'user' || message.content || (message.streamingSteps && message.streamingSteps.length > 0) || message.hasJsonData">
       <mat-card-content>
         <!-- Contenu du message -->
         <div class="message-content" [innerHTML]="message.content"></div>
 
         <!-- Tableau JSON (si des données JSON sont présentes) -->
         <app-json-table *ngIf="message.hasJsonData && message.jsonData" [data]="message.jsonData"></app-json-table>
-
-        <!-- Étapes de streaming (affichées pendant le traitement) -->
-        <div class="streaming-steps" *ngIf="message.isStreaming && message.streamingSteps && message.streamingSteps.length > 0">
-          <mat-chip-set>
-            <mat-chip *ngFor="let step of message.streamingSteps" class="step-chip">
-              <mat-spinner diameter="16" *ngIf="step === message.streamingSteps[message.streamingSteps.length - 1]"></mat-spinner>
-              {{ step }}
-            </mat-chip>
-          </mat-chip-set>
-        </div>
 
         <!-- Timestamp -->
         <div class="message-timestamp">

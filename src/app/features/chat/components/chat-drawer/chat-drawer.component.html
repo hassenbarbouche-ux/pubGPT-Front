@@ -1,0 +1,68 @@
+<!-- Drawer (sans overlay, style ChatGPT) -->
+<div class="drawer" [class.open]="isOpen">
+  <!-- Header du drawer -->
+  <div class="drawer-header">
+    <button mat-icon-button class="menu-button" (click)="toggleDrawer()">
+      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    <button mat-icon-button class="new-chat-button" (click)="createNewChat()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search"
+      >
+    </div>
+  </div>
+
+  <!-- Section Chats -->
+  <div class="chats-section">
+    <div class="chats-header">Chats</div>
+
+    <!-- Liste des conversations -->
+    <div class="chat-list">
+      <div
+        *ngFor="let chat of chatHistory"
+        class="chat-item"
+        (click)="selectChat(chat.id)">
+        {{ chat.title }}
+      </div>
+
+      <!-- Message si aucune conversation -->
+      <div *ngIf="chatHistory.length === 0" class="no-chats">
+        Aucune conversation pour le moment
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer du drawer -->
+  <div class="drawer-footer">
+    <!-- Token Usage -->
+    <div class="token-usage-section">
+      <div class="token-message">
+        37% des tokens utilisés
+      </div>
+      <div class="token-bar-container">
+        <div class="token-bar"></div>
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+      <div class="user-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="user-details">
+        <div class="user-access-badge">Full Access</div>
+        <span class="user-email">userexample.com</span>
+      </div>
+    </div>
+  </div>
+</div>

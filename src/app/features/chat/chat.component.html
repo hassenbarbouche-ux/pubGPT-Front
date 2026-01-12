@@ -1,23 +1,37 @@
-<div class="chat-container">
+<!-- Drawer pour l'historique -->
+<app-chat-drawer
+  [(isOpen)]="isDrawerOpen"
+  (chatSelected)="onChatSelected($event)"
+  (newChat)="onNewChat()">
+</app-chat-drawer>
+
+<div class="chat-container" [class.drawer-open]="isDrawerOpen">
   <!-- Header avec infos -->
   <app-header-bar
     [confidenceScore]="lastResponse?.metadata?.confidenceScore ?? null"
     [confidenceLevel]="lastResponse?.metadata?.confidenceLevel ?? null"
     [executionTime]="lastResponse?.metadata?.executionTimeMs ?? null"
     [hasSql]="!!lastResponse?.generatedSql"
+    [sqlQuery]="lastResponse?.generatedSql ?? null"
+    [sqlTables]="lastResponse?.metadata?.identifiedTables ?? []"
+    [sqlExecutionTime]="lastResponse?.metadata?.executionTimeMs ?? null"
     [tokenUsagePercent]="37"
     [requestCount]="null"
     [accuracy]="lastResponse?.metadata?.confidenceScore ?? null"
-    (sqlClick)="onSqlClick()"
-    (emailClick)="onEmailClick()">
+    (emailClick)="onEmailClick()"
+    (menuClick)="isDrawerOpen = !isDrawerOpen">
   </app-header-bar>
 
   <!-- Liste des messages -->
-  <app-message-list [messages]="messages"></app-message-list>
+  <app-message-list
+    [messages]="messages"
+    (exampleClick)="onSendMessage($event)">
+  </app-message-list>
 
   <!-- Barre d'input -->
   <app-input-bar
     [disabled]="isProcessing"
+    [maxMessagesReached]="isMaxMessagesReached"
     (sendMessage)="onSendMessage($event)">
   </app-input-bar>
 </div>

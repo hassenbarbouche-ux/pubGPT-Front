@@ -1,31 +1,31 @@
 <mat-card class="json-table-card">
   <mat-card-content>
     <div class="table-container">
-      <table mat-table [dataSource]="visibleData" class="json-table">
-        <!-- Colonne pour les numéros de ligne -->
-        <ng-container matColumnDef="rowNumber">
-          <th mat-header-cell *matHeaderCellDef class="row-number-header"></th>
-          <td mat-cell *matCellDef="let row; let i = index" class="row-number-cell">
-            <div class="row-number-badge">{{ getRowNumber(i) }}</div>
-          </td>
-        </ng-container>
-
-        <!-- Générer dynamiquement les colonnes -->
-        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-          <th mat-header-cell *matHeaderCellDef>
+      <!-- Header draggable personnalisé -->
+      <div class="custom-header" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+        <div class="header-cell row-number-header"></div>
+        <div class="header-cell"
+             *ngFor="let column of displayedColumns"
+             cdkDrag
+             (click)="sortData(column)">
+          <div class="header-content">
             {{ formatColumnName(column) }}
-          </th>
-          <td mat-cell *matCellDef="let row">
+            <mat-icon class="sort-icon" *ngIf="getSortIcon(column)">{{ getSortIcon(column) }}</mat-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table des données -->
+      <div class="data-rows">
+        <div class="data-row" *ngFor="let row of dataSource.data; let i = index">
+          <div class="data-cell row-number-cell">
+            <div class="row-number-badge">{{ getRowNumber(i) }}</div>
+          </div>
+          <div class="data-cell" *ngFor="let column of displayedColumns">
             {{ formatValue(row[column]) }}
-          </td>
-        </ng-container>
-
-        <!-- Ligne d'en-tête -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsWithRowNumber"></tr>
-
-        <!-- Lignes de données -->
-        <tr mat-row *matRowDef="let row; columns: displayedColumnsWithRowNumber;"></tr>
-      </table>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Bouton Expand/Collapse pour tableaux > 10 lignes -->

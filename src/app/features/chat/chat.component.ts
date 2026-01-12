@@ -1,23 +1,22 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../core/services/chat.service';
 import { ChatMessage, ChatResponse, StreamEvent } from '../../core/models';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
 import { InputBarComponent } from './components/input-bar/input-bar.component';
-import { SqlDialogComponent } from './components/sql-dialog/sql-dialog.component';
+import { ChatDrawerComponent } from './components/chat-drawer/chat-drawer.component';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
     HeaderBarComponent,
     MessageListComponent,
-    InputBarComponent
+    InputBarComponent,
+    ChatDrawerComponent
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -27,12 +26,23 @@ export class ChatComponent implements OnInit, OnDestroy {
   isProcessing: boolean = false;
   sessionId: string | null = null;
   lastResponse: ChatResponse | null = null;
+  isDrawerOpen: boolean = true; // Drawer ouvert par défaut
 
   private subscription?: Subscription;
 
+  // Limite de messages (5 questions utilisateur max)
+  readonly MAX_USER_MESSAGES = 5;
+
+  get userMessageCount(): number {
+    return this.messages.filter(m => m.role === 'user').length;
+  }
+
+  get isMaxMessagesReached(): boolean {
+    return this.userMessageCount >= this.MAX_USER_MESSAGES;
+  }
+
   constructor(
-    private chatService: ChatService,
-    private dialog: MatDialog
+    private chatService: ChatService
   ) {}
 
   ngOnInit(): void {
@@ -57,32 +67,69 @@ export class ChatComponent implements OnInit, OnDestroy {
     };
     this.messages.push(userMessage);
 
-    // Créer le message assistant (en attente)
-    const assistantMessage: ChatMessage = {
-      id: this.generateId(),
-      role: 'assistant',
-      content: '',
-      timestamp: new Date(),
-      isStreaming: true,
-      streamingSteps: []
-    };
-    this.messages.push(assistantMessage);
-
     this.isProcessing = true;
+
+    // Créer une référence pour le message assistant qui sera créé plus tard
+    let assistantMessage: ChatMessage | null = null;
 
     // Appeler le service SSE
     this.subscription = this.chatService.streamChat(question, this.sessionId ?? undefined).subscribe({
       next: (event: StreamEvent) => {
+        console.log('SSE Event received:', {
+          step: event.step,
+          message: event.message,
+          hasData: !!event.data,
+          dataKeys: event.data ? Object.keys(event.data) : []
+        });
+
+        // Gérer la session créée sans créer de bulle
+        if (event.step === 'session_created') {
+          if (event.data?.sessionId) {
+            this.sessionId = event.data.sessionId;
+          }
+          console.log('Session created, skipping bubble creation');
+          return;
+        }
+
+        // Créer le message assistant au premier événement (sauf session_created)
+        // pour afficher les étapes de progression
+        if (!assistantMessage) {
+          console.log('Creating assistant bubble for:', event.step);
+          assistantMessage = {
+            id: this.generateId(),
+            role: 'assistant',
+            content: '',
+            timestamp: new Date(),
+            isStreaming: true,
+            streamingSteps: []
+          };
+          this.messages.push(assistantMessage);
+        }
+
+        // Traiter l'événement
         this.handleStreamEvent(event, assistantMessage);
       },
       error: (error) => {
         console.error('Erreur SSE:', error);
-        assistantMessage.content = 'Désolé, une erreur est survenue lors du traitement de votre question.';
-        assistantMessage.isStreaming = false;
+        if (!assistantMessage) {
+          assistantMessage = {
+            id: this.generateId(),
+            role: 'assistant',
+            content: 'Désolé, une erreur est survenue lors du traitement de votre question.',
+            timestamp: new Date(),
+            isStreaming: false
+          };
+          this.messages.push(assistantMessage);
+        } else {
+          assistantMessage.content = 'Désolé, une erreur est survenue lors du traitement de votre question.';
+          assistantMessage.isStreaming = false;
+        }
         this.isProcessing = false;
       },
       complete: () => {
-        assistantMessage.isStreaming = false;
+        if (assistantMessage) {
+          assistantMessage.isStreaming = false;
+        }
         this.isProcessing = false;
       }
     });
@@ -91,8 +138,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   private handleStreamEvent(event: StreamEvent, message: ChatMessage): void {
     console.log('SSE Event:', event);
 
-    // Mettre à jour les étapes de progression
-    if (event.step !== 'result' && event.step !== 'error') {
+    // Mettre à jour les étapes de progression (sauf pour session_created)
+    if (event.step !== 'result' && event.step !== 'error' && event.step !== 'session_created') {
       if (!message.streamingSteps) {
         message.streamingSteps = [];
       }
@@ -116,7 +163,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         message.hasJsonData = true;
         message.jsonData = response.queryResults;
         // Supprimer le JSON de la réponse textuelle si présent
-        message.content = this.removeJsonFromAnswer(response.answer);
+        console.log('Original answer:', response.answer);
+        const cleanedAnswer = this.removeJsonFromAnswer(response.answer);
+        console.log('Cleaned answer:', cleanedAnswer);
+        message.content = cleanedAnswer;
       } else {
         message.content = response.answer;
       }
@@ -125,19 +175,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     // Gérer les erreurs
     if (event.step === 'error') {
       message.content = `Erreur: ${event.message}`;
-    }
-  }
-
-  onSqlClick(): void {
-    if (this.lastResponse?.generatedSql) {
-      this.dialog.open(SqlDialogComponent, {
-        width: '800px',
-        data: {
-          sql: this.lastResponse.generatedSql,
-          tables: this.lastResponse.metadata.identifiedTables,
-          executionTime: this.lastResponse.metadata.executionTimeMs
-        }
-      });
     }
   }
 
@@ -153,6 +190,18 @@ export class ChatComponent implements OnInit, OnDestroy {
     return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
+  onChatSelected(chatId: string): void {
+    // TODO: Implémenter le chargement de la conversation sélectionnée
+    console.log('Chat selected:', chatId);
+  }
+
+  onNewChat(): void {
+    // Réinitialiser la conversation
+    this.messages = [];
+    this.sessionId = null;
+    this.lastResponse = null;
+  }
+
   /**
    * Supprime le JSON formaté de la réponse textuelle
    * Détecte les patterns type ```json ou format brut JSON
@@ -160,12 +209,53 @@ export class ChatComponent implements OnInit, OnDestroy {
   private removeJsonFromAnswer(answer: string): string {
     if (!answer) return answer;
 
-    // Supprimer les blocs JSON markdown (```json...```)
-    let cleaned = answer.replace(/```json\s*[\s\S]*?```/gi, '').trim();
+    // Supprimer TOUT contenu qui ressemble à du JSON markdown (avec backticks)
+    // Pattern pour capturer ```json ... ``` ou ``` ... ``` (avec ou sans "json")
+    let cleaned = answer.replace(/```(?:json)?\s*[\s\S]*?```/gi, '').trim();
 
     // Supprimer les objets JSON bruts qui commencent par { "type": "table"
     cleaned = cleaned.replace(/\{\s*"type"\s*:\s*"table"[\s\S]*?\}\s*/gi, '').trim();
 
-    return cleaned;
+    // Détecter et supprimer les tableaux JSON bruts [...]
+    const jsonArrayStartIndex = cleaned.indexOf('[');
+    if (jsonArrayStartIndex !== -1) {
+      let bracketCount = 0;
+      let inString = false;
+      let escapeNext = false;
+
+      for (let i = jsonArrayStartIndex; i < cleaned.length; i++) {
+        const char = cleaned[i];
+
+        if (escapeNext) {
+          escapeNext = false;
+          continue;
+        }
+
+        if (char === '\\') {
+          escapeNext = true;
+          continue;
+        }
+
+        if (char === '"' && !escapeNext) {
+          inString = !inString;
+          continue;
+        }
+
+        if (!inString) {
+          if (char === '[') {
+            bracketCount++;
+          } else if (char === ']') {
+            bracketCount--;
+            if (bracketCount === 0) {
+              // On a trouvé la fin du tableau JSON
+              cleaned = cleaned.substring(0, jsonArrayStartIndex) + cleaned.substring(i + 1);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return cleaned.trim();
   }
 }
