@@ -9,9 +9,17 @@
     align-items: flex-start;
 
     .message-bubble {
-      background-color: white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      background-color: #000000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
       border-radius: 12px;
+    }
+
+    .message-content {
+      color: #FFFFFF;
+    }
+
+    .message-timestamp {
+      color: #B0B0B0;
     }
   }
 
