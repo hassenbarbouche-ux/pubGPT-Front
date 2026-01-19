@@ -321,3 +321,16 @@
     border-bottom: 10px solid #000000;
   }
 }
+
+.logout-button {
+  color: #424242;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #d32f2f;
+  }
+
+  mat-icon {
+    font-size: 24px;
+  }
+}

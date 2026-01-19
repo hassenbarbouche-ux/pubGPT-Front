@@ -1,10 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -40,6 +42,11 @@ export class HeaderBarComponent implements OnChanges {
   showAccuracyTooltip: boolean = false;
   showSqlTooltip: boolean = false;
   private previousAccuracy: number | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   getConfidenceColor(): string {
     if (!this.confidenceScore) return 'accent';
@@ -124,5 +131,10 @@ export class HeaderBarComponent implements OnChanges {
     if (this.accuracy >= 60) return 'Bonne précision. Le résultat est fiable.';
     if (this.accuracy >= 40) return 'Précision moyenne. Vérifiez les résultats importants.';
     return 'Précision faible. Soyez prudent avec ce résultat.';
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
