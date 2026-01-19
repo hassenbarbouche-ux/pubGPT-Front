@@ -44,6 +44,36 @@
   }
 }
 
+// Bouton Nouveau Chat (au-dessus de la recherche, style ChatGPT)
+.new-chat-container {
+  padding: 8px;
+
+  .chat-item.new-chat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #202123;
+    font-size: 13px;
+    font-weight: 400;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #202123;
+    }
+  }
+}
+
 // Barre de recherche
 .search-container {
   padding: 8px 12px;

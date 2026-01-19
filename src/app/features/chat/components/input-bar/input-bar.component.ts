@@ -5,7 +5,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TextFieldModule } from '@angular/cdk/text-field';
+
+export interface QuestionSubmit {
+  question: string;
+  isChartDemanded: boolean;
+}
 
 @Component({
   selector: 'app-input-bar',
@@ -17,6 +24,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatCheckboxModule,
+    MatTooltipModule,
     TextFieldModule
   ],
   templateUrl: './input-bar.component.html',
@@ -25,9 +34,10 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 export class InputBarComponent {
   @Input() disabled: boolean = false;
   @Input() maxMessagesReached: boolean = false;
-  @Output() sendMessage = new EventEmitter<string>();
+  @Output() sendMessage = new EventEmitter<QuestionSubmit>();
 
   question: string = '';
+  isChartDemanded: boolean = false;
 
   get isInputDisabled(): boolean {
     return this.disabled || this.maxMessagesReached;
@@ -35,8 +45,12 @@ export class InputBarComponent {
 
   onSend(): void {
     if (this.question.trim() && !this.isInputDisabled) {
-      this.sendMessage.emit(this.question.trim());
+      this.sendMessage.emit({
+        question: this.question.trim(),
+        isChartDemanded: this.isChartDemanded
+      });
       this.question = '';
+      // Garder la checkbox cochée pour les prochaines questions
     }
   }
 

@@ -5,7 +5,7 @@ import { ChatService } from '../../core/services/chat.service';
 import { ChatMessage, ChatResponse, StreamEvent } from '../../core/models';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
-import { InputBarComponent } from './components/input-bar/input-bar.component';
+import { InputBarComponent, QuestionSubmit } from './components/input-bar/input-bar.component';
 import { ChatDrawerComponent } from './components/chat-drawer/chat-drawer.component';
 
 @Component({
@@ -57,7 +57,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
-  onSendMessage(question: string): void {
+  onSendMessage(questionSubmit: QuestionSubmit | string): void {
+    // Support pour les deux formats (ancien string et nouveau QuestionSubmit)
+    const question = typeof questionSubmit === 'string' ? questionSubmit : questionSubmit.question;
+    const isChartDemanded = typeof questionSubmit === 'string' ? false : questionSubmit.isChartDemanded;
+
     // Ajouter le message utilisateur
     const userMessage: ChatMessage = {
       id: this.generateId(),
@@ -72,8 +76,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     // Créer une référence pour le message assistant qui sera créé plus tard
     let assistantMessage: ChatMessage | null = null;
 
-    // Appeler le service SSE
-    this.subscription = this.chatService.streamChat(question, this.sessionId ?? undefined).subscribe({
+    // Appeler le service SSE avec isChartDemanded
+    this.subscription = this.chatService.streamChat(question, this.sessionId ?? undefined, isChartDemanded).subscribe({
       next: (event: StreamEvent) => {
         console.log('SSE Event received:', {
           step: event.step,

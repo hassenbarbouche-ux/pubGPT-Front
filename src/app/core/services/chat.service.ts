@@ -20,9 +20,10 @@ export class ChatService {
    *
    * @param question Question de l'utilisateur
    * @param sessionId ID de session (optionnel)
+   * @param isChartDemanded Indique si l'utilisateur souhaite un graphique (optionnel, défaut: false)
    * @returns Observable d'événements SSE
    */
-  streamChat(question: string, sessionId?: string): Observable<StreamEvent> {
+  streamChat(question: string, sessionId?: string, isChartDemanded: boolean = false): Observable<StreamEvent> {
     return new Observable(observer => {
       // Construire l'URL avec les paramètres
       const params = new URLSearchParams();
@@ -30,6 +31,7 @@ export class ChatService {
       if (sessionId) {
         params.append('sessionId', sessionId);
       }
+      params.append('isChartDemanded', isChartDemanded.toString());
 
       const url = `${this.API_URL}/stream?${params.toString()}`;
 

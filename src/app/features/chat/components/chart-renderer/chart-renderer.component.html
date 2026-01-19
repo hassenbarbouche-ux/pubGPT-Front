@@ -1,0 +1,121 @@
+<div class="chart-container" *ngIf="chartData && chartData.visualization">
+  <!-- Titre du graphique -->
+  <h3 class="chart-title">{{ chartData.visualization.title }}</h3>
+
+  <!-- PIE Chart -->
+  <ngx-charts-pie-chart
+    *ngIf="chartData.visualization.type === ChartType.PIE"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [legend]="showLegend"
+    [labels]="true"
+    [doughnut]="false"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [animations]="animations"
+  >
+  </ngx-charts-pie-chart>
+
+  <!-- BAR Chart (Vertical) -->
+  <ngx-charts-bar-vertical
+    *ngIf="chartData.visualization.type === ChartType.BAR"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [xAxisTickFormatting]="xAxisFormatting"
+    [animations]="animations"
+  >
+  </ngx-charts-bar-vertical>
+
+  <!-- BAR Chart (Horizontal) -->
+  <ngx-charts-bar-horizontal
+    *ngIf="chartData.visualization.type === ChartType.HORIZONTAL_BAR"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [xAxisTickFormatting]="xAxisFormatting"
+    [animations]="animations"
+  >
+  </ngx-charts-bar-horizontal>
+
+  <!-- LINE Chart -->
+  <ngx-charts-line-chart
+    *ngIf="chartData.visualization.type === ChartType.LINE || chartData.visualization.type === ChartType.TIME_SERIES"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [autoScale]="true"
+    [xAxisTickFormatting]="xAxisFormatting"
+    [animations]="animations"
+  >
+  </ngx-charts-line-chart>
+
+  <!-- AREA Chart -->
+  <ngx-charts-area-chart
+    *ngIf="chartData.visualization.type === ChartType.AREA"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [xAxisTickFormatting]="xAxisFormatting"
+    [animations]="animations"
+  >
+  </ngx-charts-area-chart>
+
+  <!-- STACKED BAR Chart -->
+  <ngx-charts-bar-vertical-stacked
+    *ngIf="chartData.visualization.type === ChartType.STACKED_BAR"
+    [view]="view"
+    [results]="chartDataFormatted"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [gradient]="gradient"
+    [scheme]="colorScheme"
+    [xAxisTickFormatting]="xAxisFormatting"
+  >
+  </ngx-charts-bar-vertical-stacked>
+
+  <!-- Métadonnées (debug/info) -->
+  <div class="chart-metadata" *ngIf="chartData.metadata">
+    <small class="metadata-text">
+      {{ chartData.metadata.rowCount }} lignes
+      <span *ngIf="chartData.metadata.hasMoreData"> (limité à 100)</span>
+    </small>
+  </div>
+</div>

@@ -25,32 +25,32 @@ export class ChatDrawerComponent {
   chatHistory: ChatHistory[] = [
     {
       id: '1',
-      title: 'Masse après injection insuline',
+      title: 'Proportion des Daypart sur Cnews en 2025',
       timestamp: new Date(2024, 0, 10, 14, 30)
     },
     {
       id: '2',
-      title: 'Tester un système RAG',
+      title: 'Verification des locks BDD',
       timestamp: new Date(2024, 0, 9, 10, 15)
     },
     {
       id: '3',
-      title: 'Analyse Text-to-SQL Entreprise',
+      title: 'Suivi des critéres média-planning',
       timestamp: new Date(2024, 0, 8, 16, 45)
     },
     {
       id: '4',
-      title: 'Versionnement des prompts IA',
+      title: 'Analyse des objectifs Peugeot 208',
       timestamp: new Date(2024, 0, 7, 9, 20)
     },
     {
       id: '5',
-      title: 'Assurance prêt immobilier chimio',
+      title: 'Comment décaler un lien écran',
       timestamp: new Date(2024, 0, 6, 11, 0)
     },
     {
       id: '6',
-      title: 'Logo pour pubGPT',
+      title: 'Evolution investissement Nestlé en 2024',
       timestamp: new Date(2024, 0, 5, 15, 30)
     }
   ];

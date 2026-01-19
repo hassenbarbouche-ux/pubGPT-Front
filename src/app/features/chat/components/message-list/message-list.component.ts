@@ -19,7 +19,7 @@ export class MessageListComponent implements AfterViewChecked {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   backgroundVideo = '/videos/video.mp4';
-  private shouldScrollToBottom = true;
+  private shouldScrollToBottom = false; // Désactivé pour éviter le scroll automatique
 
   examples = [
     'Donne moi les briefs Peugeot de 2025 avec leurs spots et leurs tarifs',

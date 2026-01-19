@@ -1,0 +1,161 @@
+.chart-container {
+  width: 100%;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  margin-top: 16px;
+  overflow: hidden; // Empêche le scroll automatique
+  position: relative; // Contient le graphique
+
+  // Empêche le scroll au hover sur les éléments du graphique
+  * {
+    pointer-events: auto;
+    scroll-behavior: auto;
+  }
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2F2F2F;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.chart-metadata {
+  margin-top: 12px;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.metadata-text {
+  font-size: 12px;
+  color: #666666;
+  font-style: italic;
+}
+
+// Override des styles NGX-Charts pour le thème grayscale
+::ng-deep {
+  // Textes des axes et légendes en gris foncé
+  .chart-container .ngx-charts {
+    width: 100% !important; // Force le graphique à prendre toute la largeur
+    height: 400px !important;
+
+    svg {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    // Empêche le scroll automatique au hover sur les courbes
+    .line-series,
+    .area-series,
+    .bar,
+    .circle {
+      pointer-events: all !important;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    // Ralentir les animations NGX-Charts
+    * {
+      transition-duration: 1000ms !important;
+      animation-duration: 500ms !important;
+    }
+
+    text {
+      fill: #424242 !important;
+      font-family: inherit;
+    }
+
+    // Labels des axes
+    .axis-label {
+      fill: #2F2F2F !important;
+      font-weight: 500;
+    }
+
+    // Lignes de grille en gris clair
+    .gridline-path {
+      stroke: #e0e0e0 !important;
+    }
+
+    // Domaine des axes
+    .domain {
+      stroke: #bdbdbd !important;
+    }
+
+    // Lignes du graphique
+    .line-series {
+      .line {
+        stroke-width: 2.5;
+      }
+    }
+
+    // Points du graphique
+    .circle {
+      stroke-width: 2;
+    }
+
+    // Barres du graphique
+    .bar {
+      opacity: 0.9;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    // Légende
+    .legend-labels {
+      background-color: transparent !important;
+    }
+
+    .legend-label {
+      color: #424242 !important;
+      font-size: 12px;
+    }
+
+    .legend-label-text {
+      fill: #424242 !important;
+    }
+
+    // Tooltips - Empêche le scroll automatique
+    .tooltip-anchor {
+      fill: #2F2F2F !important;
+    }
+
+    .ngx-charts-tooltip-content {
+      pointer-events: none !important;
+    }
+
+    // Conteneur des tooltips - position fixe pour éviter le scroll
+    ngx-tooltip-content {
+      position: fixed !important;
+      pointer-events: none !important;
+    }
+
+    .area {
+      opacity: 0.7;
+    }
+  }
+
+  // Animation de fade-in pour le graphique
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .chart-container {
+    animation: fadeIn 0.3s ease-out;
+  }
+}

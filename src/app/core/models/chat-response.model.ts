@@ -1,3 +1,5 @@
+import { ChartData } from './chart-data.model';
+
 /**
  * Interface pour la réponse finale du chat
  * Correspond au DTO ChatResponse du backend Java
@@ -9,6 +11,7 @@ export interface ChatResponse {
   queryResults: Record<string, any>[] | null;
   metadata: ExecutionMetadata;
   confidenceScore: SqlConfidenceScore | null;
+  chartData?: ChartData | null;
 }
 
 /**

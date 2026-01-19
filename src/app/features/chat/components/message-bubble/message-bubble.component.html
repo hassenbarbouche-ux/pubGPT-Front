@@ -1,4 +1,4 @@
-<div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'" [@slideDown]="message.role === 'assistant'">
+<div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'">
   <!-- Avatar -->
   <div class="message-avatar" *ngIf="message.role === 'user'">
     <mat-icon class="avatar-icon">account_circle</mat-icon>
@@ -10,6 +10,12 @@
       <mat-card-content>
         <!-- Contenu du message -->
         <div class="message-content" [innerHTML]="message.content"></div>
+
+        <!-- Graphique (si chartData est présent) -->
+        <app-chart-renderer
+          *ngIf="message.response && message.response.chartData"
+          [chartData]="message.response.chartData!">
+        </app-chart-renderer>
 
         <!-- Tableau JSON (si des données JSON sont présentes) -->
         <app-json-table *ngIf="message.hasJsonData && message.jsonData" [data]="message.jsonData"></app-json-table>
