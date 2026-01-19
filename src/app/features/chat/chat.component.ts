@@ -149,9 +149,13 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         this.isProcessing = false;
 
-        // Refresh token stats immediately after response
+        // Refresh token stats and conversation list immediately after response
         if (this.chatDrawer) {
           this.chatDrawer.refreshTokenStats();
+
+          // Refresh conversation list to show new/updated conversation
+          // This ensures the conversation appears in history with its title
+          this.chatDrawer.loadConversations();
         }
       }
     });
@@ -236,6 +240,13 @@ export class ChatComponent implements OnInit, OnDestroy {
 
           // Pour les messages assistant, ajouter le contexte (SQL, résultats, graphiques)
           if (msg.role === 'ASSISTANT' && msg.context) {
+            console.log('Processing ASSISTANT message:', {
+              messageId: msg.messageId,
+              hasContext: !!msg.context,
+              hasChartData: !!msg.context.chartData,
+              chartData: msg.context.chartData
+            });
+
             // Créer un objet ChatResponse pour stocker toutes les infos
             const response: ChatResponse = {
               sessionId: conversation.sessionId,
@@ -257,6 +268,7 @@ export class ChatComponent implements OnInit, OnDestroy {
               chartData: msg.context.chartData || null
             };
 
+            console.log('Created response with chartData:', !!response.chartData);
             chatMessage.response = response;
 
             // Si on a des résultats de requête, les marquer comme JSON data
