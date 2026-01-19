@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../core/services/chat.service';
+import { AuthService } from '../../core/services/auth.service';
+import { ConversationService } from '../../core/services/conversation.service';
 import { ChatMessage, ChatResponse, StreamEvent } from '../../core/models';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
@@ -22,6 +24,8 @@ import { ChatDrawerComponent } from './components/chat-drawer/chat-drawer.compon
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit, OnDestroy {
+  @ViewChild('chatDrawer') chatDrawer!: ChatDrawerComponent;
+
   messages: ChatMessage[] = [];
   isProcessing: boolean = false;
   sessionId: string | null = null;
@@ -42,7 +46,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private chatService: ChatService
+    private chatService: ChatService,
+    private authService: AuthService,
+    private conversationService: ConversationService
   ) {}
 
   ngOnInit(): void {
@@ -73,11 +79,18 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.isProcessing = true;
 
+    // Récupérer l'utilisateur connecté
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser || !currentUser.id) {
+      console.error('User not authenticated');
+      return;
+    }
+
     // Créer une référence pour le message assistant qui sera créé plus tard
     let assistantMessage: ChatMessage | null = null;
 
-    // Appeler le service SSE avec isChartDemanded
-    this.subscription = this.chatService.streamChat(question, this.sessionId ?? undefined, isChartDemanded).subscribe({
+    // Appeler le service SSE avec userId et isChartDemanded
+    this.subscription = this.chatService.streamChat(question, currentUser.id, this.sessionId ?? undefined, isChartDemanded).subscribe({
       next: (event: StreamEvent) => {
         console.log('SSE Event received:', {
           step: event.step,
@@ -135,6 +148,11 @@ export class ChatComponent implements OnInit, OnDestroy {
           assistantMessage.isStreaming = false;
         }
         this.isProcessing = false;
+
+        // Refresh token stats immediately after response
+        if (this.chatDrawer) {
+          this.chatDrawer.refreshTokenStats();
+        }
       }
     });
   }
@@ -194,9 +212,73 @@ export class ChatComponent implements OnInit, OnDestroy {
     return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
-  onChatSelected(chatId: string): void {
-    // TODO: Implémenter le chargement de la conversation sélectionnée
-    console.log('Chat selected:', chatId);
+  onChatSelected(sessionId: string): void {
+    console.log('Loading conversation:', sessionId);
+
+    // Charger la conversation complète avec tous les résultats
+    this.conversationService.getConversation(sessionId, true).subscribe({
+      next: (conversation) => {
+        console.log('Conversation loaded:', conversation);
+
+        // Réinitialiser l'état
+        this.messages = [];
+        this.sessionId = conversation.sessionId;
+        this.lastResponse = null;
+
+        // Convertir les messages de la conversation en ChatMessage
+        conversation.messages.forEach(msg => {
+          const chatMessage: ChatMessage = {
+            id: msg.messageId,
+            role: msg.role.toLowerCase() as 'user' | 'assistant',
+            content: msg.content,
+            timestamp: msg.timestamp
+          };
+
+          // Pour les messages assistant, ajouter le contexte (SQL, résultats, graphiques)
+          if (msg.role === 'ASSISTANT' && msg.context) {
+            // Créer un objet ChatResponse pour stocker toutes les infos
+            const response: ChatResponse = {
+              sessionId: conversation.sessionId,
+              answer: msg.content,
+              generatedSql: msg.context.generatedSql || null,
+              queryResults: msg.context.queryResults || null,
+              metadata: {
+                intent: msg.context.intent || '',
+                identifiedTables: msg.context.identifiedTables || [],
+                identifiedColumns: msg.context.resultColumns || [],
+                identifiedWorkspaces: msg.context.identifiedWorkspaces || [],
+                executionTimeMs: msg.context.executionTimeMs || 0,
+                resultCount: msg.context.resultCount || 0,
+                sqlExecuted: !!msg.context.generatedSql,
+                confidenceScore: null,
+                confidenceLevel: null
+              },
+              confidenceScore: null, // Pas stocké en base
+              chartData: msg.context.chartData || null
+            };
+
+            chatMessage.response = response;
+
+            // Si on a des résultats de requête, les marquer comme JSON data
+            if (msg.context.queryResults && msg.context.queryResults.length > 0) {
+              chatMessage.hasJsonData = true;
+              chatMessage.jsonData = msg.context.queryResults;
+            }
+
+            // Mettre à jour lastResponse avec le dernier message assistant
+            this.lastResponse = response;
+          }
+
+          this.messages.push(chatMessage);
+        });
+
+        console.log('Conversation loaded successfully, messages:', this.messages.length);
+      },
+      error: (error) => {
+        console.error('Error loading conversation:', error);
+        // Optionnel: afficher une notification d'erreur à l'utilisateur
+      }
+    });
   }
 
   onNewChat(): void {
