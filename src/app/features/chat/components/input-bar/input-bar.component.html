@@ -5,8 +5,19 @@
     <span>Limite de conversation atteinte. Veuillez démarrer une nouvelle conversation pour continuer.</span>
   </div>
 
-  <!-- Checkbox pour la génération de graphique -->
+  <!-- Options de génération -->
   <div class="chart-option" *ngIf="!maxMessagesReached">
+    <label class="chart-checkbox-wrapper">
+      <mat-checkbox
+        [(ngModel)]="isExplanationDemanded"
+        [disabled]="isInputDisabled"
+        matTooltip="Génère une explication détaillée de la réponse"
+      >
+        Générer une explication
+      </mat-checkbox>
+      <mat-icon class="chart-icon">info</mat-icon>
+    </label>
+
     <label class="chart-checkbox-wrapper">
       <mat-checkbox
         [(ngModel)]="isChartDemanded"

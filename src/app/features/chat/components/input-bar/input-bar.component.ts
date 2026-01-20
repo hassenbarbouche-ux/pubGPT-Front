@@ -12,6 +12,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 export interface QuestionSubmit {
   question: string;
   isChartDemanded: boolean;
+  isExplanationDemanded: boolean;
 }
 
 @Component({
@@ -38,6 +39,7 @@ export class InputBarComponent {
 
   question: string = '';
   isChartDemanded: boolean = false;
+  isExplanationDemanded: boolean = false;
 
   get isInputDisabled(): boolean {
     return this.disabled || this.maxMessagesReached;
@@ -47,10 +49,11 @@ export class InputBarComponent {
     if (this.question.trim() && !this.isInputDisabled) {
       this.sendMessage.emit({
         question: this.question.trim(),
-        isChartDemanded: this.isChartDemanded
+        isChartDemanded: this.isChartDemanded,
+        isExplanationDemanded: this.isExplanationDemanded
       });
       this.question = '';
-      // Garder la checkbox cochée pour les prochaines questions
+      // Garder les checkboxes cochées pour les prochaines questions
     }
   }
 

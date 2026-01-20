@@ -67,6 +67,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     // Support pour les deux formats (ancien string et nouveau QuestionSubmit)
     const question = typeof questionSubmit === 'string' ? questionSubmit : questionSubmit.question;
     const isChartDemanded = typeof questionSubmit === 'string' ? false : questionSubmit.isChartDemanded;
+    const isExplanationDemanded = typeof questionSubmit === 'string' ? false : (questionSubmit.isExplanationDemanded || false);
 
     // Ajouter le message utilisateur
     const userMessage: ChatMessage = {
@@ -88,6 +89,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // Créer une référence pour le message assistant qui sera créé plus tard
     let assistantMessage: ChatMessage | null = null;
+
+    // TODO: Implémenter isExplanationDemanded dans le backend
+    console.log('Options:', { isChartDemanded, isExplanationDemanded });
 
     // Appeler le service SSE avec userId et isChartDemanded
     this.subscription = this.chatService.streamChat(question, currentUser.id, this.sessionId ?? undefined, isChartDemanded).subscribe({
