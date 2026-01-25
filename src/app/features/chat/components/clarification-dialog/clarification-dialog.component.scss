@@ -1,16 +1,21 @@
+// Thème sombre (noir et blanc)
 .clarification-dialog {
+  background-color: #000000;
+  color: #ffffff;
+
   h2[mat-dialog-title] {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--text-primary, #212121);
+    color: #ffffff;
     margin: 0;
     padding: 20px 24px 16px;
     font-size: 20px;
     font-weight: 500;
+    background-color: #000000;
 
     mat-icon {
-      color: #1976d2;
+      color: #ffffff;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -22,51 +27,56 @@
     min-width: 500px;
     max-width: 600px;
     min-height: 300px;
+    background-color: #000000;
+    color: #ffffff;
 
     .dialog-description {
-      color: var(--text-secondary, #6E6E80);
+      color: #cccccc;
       font-size: 14px;
       line-height: 1.5;
       margin-bottom: 24px;
     }
 
     mat-stepper {
+      background-color: #000000;
+
       .step-content {
         padding: 24px 0;
 
         .question-title {
           font-size: 16px;
           font-weight: 500;
-          color: var(--text-primary, #212121);
-          margin: 0 0 20px 0;
+          color: #ffffff;
+          margin: 0 0 16px 0;
           line-height: 1.5;
         }
 
         .radio-group {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 8px;
           margin-bottom: 20px;
 
           .radio-option {
-            padding: 12px 16px;
-            border: 1px solid var(--border-color, #E5E5E5);
-            border-radius: 8px;
+            padding: 8px 12px;
+            border: 1px solid #333333;
+            border-radius: 6px;
             transition: all 0.2s ease;
+            background-color: #000000;
 
             &:hover {
-              border-color: #1976d2;
-              background-color: rgba(25, 118, 210, 0.04);
+              border-color: #666666;
+              background-color: #111111;
             }
 
             &.mat-radio-checked {
-              border-color: #1976d2;
-              background-color: rgba(25, 118, 210, 0.08);
+              border-color: #ffffff;
+              background-color: #1a1a1a;
             }
 
             &.radio-other {
               font-weight: 500;
-              color: #1976d2;
+              color: #ffffff;
             }
           }
         }
@@ -77,11 +87,13 @@
 
           input {
             font-size: 14px;
+            color: #ffffff;
+            background-color: #000000;
           }
 
           mat-hint {
             font-size: 12px;
-            color: var(--text-secondary, #6E6E80);
+            color: #999999;
           }
         }
 
@@ -90,7 +102,7 @@
           justify-content: space-between;
           margin-top: 24px;
           padding-top: 16px;
-          border-top: 1px solid var(--border-color, #E5E5E5);
+          border-top: 1px solid #333333;
 
           .spacer {
             flex: 1;
@@ -115,6 +127,7 @@
   mat-dialog-actions {
     padding: 16px 24px 20px;
     gap: 12px;
+    background-color: #000000;
 
     button {
       display: flex;
@@ -130,25 +143,128 @@
   }
 }
 
-// Override des styles Material Stepper pour un meilleur rendu
+// Override des styles Material pour thème sombre
 ::ng-deep {
   .clarification-dialog {
+    background-color: #000000 !important;
+
+    // Dialog container
+    .mat-mdc-dialog-container,
+    .mdc-dialog__surface {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    // Stepper
     mat-step-header {
+      background-color: #000000 !important;
+
       .mat-step-icon {
-        background-color: #1976d2 !important;
+        background-color: #333333 !important;
+        color: #ffffff !important;
       }
 
-      .mat-step-icon-selected {
-        background-color: #1976d2 !important;
+      .mat-step-icon-selected,
+      .mat-step-icon-state-done {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+
+      .mat-step-label,
+      .mat-step-text-label {
+        color: #999999 !important;
       }
 
       .mat-step-label-selected {
         font-weight: 500;
+        color: #ffffff !important;
       }
     }
 
     .mat-stepper-horizontal-line {
-      border-top-color: var(--border-color, #E5E5E5);
+      border-top-color: #333333 !important;
+    }
+
+    // Radio buttons
+    .mat-mdc-radio-button {
+      .mdc-radio {
+        .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
+          border-color: #666666 !important;
+        }
+
+        .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle {
+          border-color: #ffffff !important;
+        }
+
+        .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+          border-color: #ffffff !important;
+        }
+      }
+
+      .mdc-label,
+      label {
+        color: #ffffff !important;
+      }
+    }
+
+    // Form field
+    .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background-color: #000000 !important;
+
+        .mdc-text-field {
+          background-color: #000000 !important;
+        }
+
+        .mat-mdc-form-field-focus-overlay {
+          background-color: transparent !important;
+        }
+      }
+
+      .mat-mdc-form-field-infix {
+        input {
+          color: #ffffff !important;
+          caret-color: #ffffff !important;
+        }
+      }
+
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: #333333 !important;
+        }
+      }
+
+      &.mat-focused .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: #ffffff !important;
+        }
+      }
+
+      .mat-mdc-form-field-label,
+      label {
+        color: #999999 !important;
+      }
+
+      .mat-mdc-form-field-hint {
+        color: #999999 !important;
+      }
+    }
+
+    // Buttons
+    .mat-mdc-button,
+    .mat-mdc-raised-button {
+      &.mat-unthemed {
+        color: #ffffff !important;
+      }
+
+      &.mat-primary {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
     }
   }
 }
