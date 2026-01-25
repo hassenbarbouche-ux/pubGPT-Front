@@ -1,0 +1,102 @@
+<div class="clarification-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>help_outline</mat-icon>
+    Clarification nécessaire
+  </h2>
+
+  <mat-dialog-content>
+    <p class="dialog-description">
+      Pour générer une requête SQL précise, j'ai besoin de quelques clarifications.
+      Veuillez répondre aux questions suivantes :
+    </p>
+
+    <mat-stepper #stepper linear [(selectedIndex)]="currentStepIndex">
+      <mat-step *ngFor="let question of data.questions; let i = index" [completed]="isCurrentStepValid()">
+        <ng-template matStepLabel>Question {{ i + 1 }}/{{ data.questions.length }}</ng-template>
+
+        <div class="step-content">
+          <h3 class="question-title">{{ question.question }}</h3>
+
+          <mat-radio-group
+            [(ngModel)]="answers[i].selectedChoice"
+            (change)="onChoiceChange(i, $event.value)"
+            class="radio-group"
+          >
+            <!-- Choix prédéfinis -->
+            <mat-radio-button
+              *ngFor="let choice of question.choices"
+              [value]="choice"
+              class="radio-option"
+            >
+              {{ choice }}
+            </mat-radio-button>
+
+            <!-- Option "Autre" -->
+            <mat-radio-button value="Autre" class="radio-option radio-other">
+              Autre
+            </mat-radio-button>
+          </mat-radio-group>
+
+          <!-- Champ texte pour "Autre" -->
+          <mat-form-field
+            *ngIf="answers[i].selectedChoice === 'Autre'"
+            appearance="outline"
+            class="custom-answer-field"
+          >
+            <mat-label>Votre réponse personnalisée</mat-label>
+            <input
+              matInput
+              [(ngModel)]="answers[i].customAnswer"
+              placeholder="Entrez votre réponse..."
+              (keyup.enter)="stepper.next()"
+            />
+            <mat-hint>Appuyez sur Entrée pour continuer</mat-hint>
+          </mat-form-field>
+
+          <!-- Boutons de navigation du stepper -->
+          <div class="step-actions">
+            <button
+              mat-button
+              *ngIf="i > 0"
+              (click)="stepper.previous()"
+              type="button"
+            >
+              <mat-icon>arrow_back</mat-icon>
+              Précédent
+            </button>
+
+            <div class="spacer"></div>
+
+            <button
+              mat-raised-button
+              color="primary"
+              *ngIf="i < data.questions.length - 1"
+              [disabled]="!isCurrentStepValid()"
+              (click)="stepper.next()"
+              type="button"
+            >
+              Suivant
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" type="button">
+      Annuler
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!areAllQuestionsAnswered()"
+      (click)="onConfirm()"
+      type="button"
+    >
+      <mat-icon>check</mat-icon>
+      Confirmer et continuer
+    </button>
+  </mat-dialog-actions>
+</div>

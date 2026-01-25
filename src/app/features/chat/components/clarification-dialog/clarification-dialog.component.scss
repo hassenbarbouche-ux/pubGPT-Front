@@ -1,0 +1,154 @@
+.clarification-dialog {
+  h2[mat-dialog-title] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary, #212121);
+    margin: 0;
+    padding: 20px 24px 16px;
+    font-size: 20px;
+    font-weight: 500;
+
+    mat-icon {
+      color: #1976d2;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  mat-dialog-content {
+    padding: 0 24px 20px;
+    min-width: 500px;
+    max-width: 600px;
+    min-height: 300px;
+
+    .dialog-description {
+      color: var(--text-secondary, #6E6E80);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    mat-stepper {
+      .step-content {
+        padding: 24px 0;
+
+        .question-title {
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--text-primary, #212121);
+          margin: 0 0 20px 0;
+          line-height: 1.5;
+        }
+
+        .radio-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 20px;
+
+          .radio-option {
+            padding: 12px 16px;
+            border: 1px solid var(--border-color, #E5E5E5);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: #1976d2;
+              background-color: rgba(25, 118, 210, 0.04);
+            }
+
+            &.mat-radio-checked {
+              border-color: #1976d2;
+              background-color: rgba(25, 118, 210, 0.08);
+            }
+
+            &.radio-other {
+              font-weight: 500;
+              color: #1976d2;
+            }
+          }
+        }
+
+        .custom-answer-field {
+          width: 100%;
+          margin-top: 16px;
+
+          input {
+            font-size: 14px;
+          }
+
+          mat-hint {
+            font-size: 12px;
+            color: var(--text-secondary, #6E6E80);
+          }
+        }
+
+        .step-actions {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 24px;
+          padding-top: 16px;
+          border-top: 1px solid var(--border-color, #E5E5E5);
+
+          .spacer {
+            flex: 1;
+          }
+
+          button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  mat-dialog-actions {
+    padding: 16px 24px 20px;
+    gap: 12px;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+// Override des styles Material Stepper pour un meilleur rendu
+::ng-deep {
+  .clarification-dialog {
+    mat-step-header {
+      .mat-step-icon {
+        background-color: #1976d2 !important;
+      }
+
+      .mat-step-icon-selected {
+        background-color: #1976d2 !important;
+      }
+
+      .mat-step-label-selected {
+        font-weight: 500;
+      }
+    }
+
+    .mat-stepper-horizontal-line {
+      border-top-color: var(--border-color, #E5E5E5);
+    }
+  }
+}

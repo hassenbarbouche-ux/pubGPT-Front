@@ -1,4 +1,5 @@
 import { ChartData } from './chart-data.model';
+import { AmbiguityResponse } from './ambiguity.model';
 
 /**
  * Interface pour la réponse finale du chat
@@ -12,6 +13,20 @@ export interface ChatResponse {
   metadata: ExecutionMetadata;
   confidenceScore: SqlConfidenceScore | null;
   chartData?: ChartData | null;
+
+  /**
+   * Information sur l'ambiguïté détectée dans la question utilisateur.
+   * Présent uniquement si le SqlGenerator détecte une ambiguïté et ne peut pas
+   * générer de requête SQL sans clarifications supplémentaires.
+   *
+   * Quand ce champ est non-null, le frontend doit:
+   * 1. Afficher une popup stepper avec les questions de clarification
+   * 2. Collecter les réponses de l'utilisateur
+   * 3. Faire un second appel API avec clarificationContext
+   *
+   * Les autres champs (answer, generatedSql, queryResults) seront null quand une ambiguïté est détectée.
+   */
+  ambiguityDetected?: AmbiguityResponse | null;
 }
 
 /**
