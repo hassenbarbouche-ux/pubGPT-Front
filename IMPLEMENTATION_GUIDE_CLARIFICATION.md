@@ -386,20 +386,53 @@ import { MatDialogModule } from '@angular/material/dialog';
 - [x] Créer modèles TypeScript (ambiguity.model.ts)
 - [x] Modifier ChatResponse (chat-response.model.ts)
 - [x] Créer ClarificationDialogComponent (TS + HTML + SCSS)
-- [ ] Modifier ChatService
-  - [ ] Ajouter méthode `sendMessageWithClarification()`
-  - [ ] (Optionnel) Modifier `streamChat()` pour support clarificationContext
-- [ ] Modifier ChatComponent
-  - [ ] Injecter MatDialog
-  - [ ] Modifier `handleStreamEvent()` pour détecter ambiguïté
-  - [ ] Ajouter `openClarificationDialog()`
-  - [ ] Ajouter `resendMessageWithClarification()`
-  - [ ] Ajouter imports (MatDialogModule, ClarificationDialogComponent)
-- [ ] Tester le flux complet
+- [x] Modifier ChatService
+  - [x] Ajouter méthode `sendMessageWithClarification()`
+  - [x] Ajouter événement SSE `ambiguity_detected`
+  - [x] Gérer fermeture stream sur ambiguïté détectée
+- [x] Modifier ChatComponent
+  - [x] Injecter MatDialog
+  - [x] Modifier `handleStreamEvent()` pour détecter ambiguïté (SSE + POST)
+  - [x] Ajouter `openClarificationDialog()`
+  - [x] Ajouter `resendMessageWithClarification()`
+  - [x] Ajouter imports (MatDialogModule, ClarificationDialogComponent)
+- [ ] Tester le flux complet avec backend réel
   - [ ] Question simple → réponse normale
   - [ ] Question ambiguë → popup → clarifications → réponse
   - [ ] Ambiguïté persistante → message d'erreur
   - [ ] Annulation du dialog → retour état initial
+
+---
+
+## ✅ IMPLÉMENTATION TERMINÉE
+
+L'intégration complète du système de clarification d'ambiguïté est maintenant terminée !
+
+### Ce qui a été fait:
+
+**Backend (100% complet):**
+- ✅ DTOs créés (ClarificationQuestionDto, AmbiguityResponseDto, ClarificationContextDto)
+- ✅ ChatRequest/ChatResponse modifiés
+- ✅ SqlGeneratorAgent modifié avec détection d'ambiguïté
+- ✅ ChatOrchestrationService modifié pour gérer les clarifications
+- ✅ ChatStreamingService modifié avec événement SSE `ambiguity_detected`
+
+**Frontend (100% complet):**
+- ✅ Modèles TypeScript créés (ambiguity.model.ts)
+- ✅ ChatResponse modifié
+- ✅ ClarificationDialogComponent créé avec Material Stepper
+- ✅ ChatService.sendMessageWithClarification() ajouté
+- ✅ ChatComponent.handleStreamEvent() modifié pour détecter ambiguïté
+- ✅ ChatComponent.openClarificationDialog() ajouté
+- ✅ ChatComponent.resendMessageWithClarification() ajouté
+
+### Commits effectués:
+1. **Backend:** Feature: Système de clarification d'ambiguïté - Backend complet
+2. **Frontend Partie 1:** Feature: Frontend - Système de clarification (modèles + dialog)
+3. **Frontend Partie 2:** Feature: Frontend - Système de clarification (intégration chat)
+
+### Prochaine étape:
+Tester le flux complet avec le backend opérationnel.
 
 ---
 
