@@ -1,14 +1,21 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ChatService } from '../../core/services/chat.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ConversationService } from '../../core/services/conversation.service';
 import { ChatMessage, ChatResponse, StreamEvent } from '../../core/models';
+import { initChecklistState, getChecklistItemFromEvent, ChecklistItemState } from '../../core/models/checklist.model';
+import { AmbiguityResponse, ClarificationContext } from '../../core/models/ambiguity.model';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
 import { InputBarComponent, QuestionSubmit } from './components/input-bar/input-bar.component';
 import { ChatDrawerComponent } from './components/chat-drawer/chat-drawer.component';
+import {
+  ClarificationDialogComponent,
+  ClarificationDialogData
+} from './components/clarification-dialog/clarification-dialog.component';
 
 @Component({
   selector: 'app-chat',
@@ -18,7 +25,9 @@ import { ChatDrawerComponent } from './components/chat-drawer/chat-drawer.compon
     HeaderBarComponent,
     MessageListComponent,
     InputBarComponent,
-    ChatDrawerComponent
+    ChatDrawerComponent,
+    MatDialogModule,
+    ClarificationDialogComponent
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -48,7 +57,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
-    private conversationService: ConversationService
+    private conversationService: ConversationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +132,8 @@ export class ChatComponent implements OnInit, OnDestroy {
             content: '',
             timestamp: new Date(),
             isStreaming: true,
-            streamingSteps: []
+            streamingSteps: [],
+            checklistState: initChecklistState()
           };
           this.messages.push(assistantMessage);
         }
@@ -168,22 +179,71 @@ export class ChatComponent implements OnInit, OnDestroy {
   private handleStreamEvent(event: StreamEvent, message: ChatMessage): void {
     console.log('SSE Event:', event);
 
-    // Mettre à jour les étapes de progression (sauf pour session_created)
-    if (event.step !== 'result' && event.step !== 'error' && event.step !== 'session_created') {
+    // Mettre à jour les étapes de progression (sauf pour session_created et ambiguity_detected)
+    if (event.step !== 'result' && event.step !== 'error' && event.step !== 'session_created' && event.step !== 'ambiguity_detected') {
       if (!message.streamingSteps) {
         message.streamingSteps = [];
       }
       message.streamingSteps.push(event.message);
     }
 
+    // Mettre à jour l'état de la checklist
+    this.updateChecklistState(event, message);
+
     // Gérer l'événement de session créée
     if (event.step === 'session_created' && event.data?.sessionId) {
       this.sessionId = event.data.sessionId;
     }
 
+    // Gérer l'événement d'ambiguïté détectée (SSE streaming)
+    if (event.step === 'ambiguity_detected' && event.data) {
+      const ambiguityResponse = event.data as AmbiguityResponse;
+      console.log('🔍 Ambiguïté détectée (SSE):', ambiguityResponse);
+
+      // Récupérer la question originale depuis le dernier message utilisateur
+      const userMessages = this.messages.filter(m => m.role === 'user');
+      const originalQuestion = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : '';
+
+      // Ouvrir le dialog de clarification
+      this.openClarificationDialog(ambiguityResponse, originalQuestion);
+
+      // Supprimer le message assistant de la liste
+      const index = this.messages.indexOf(message);
+      if (index > -1) {
+        this.messages.splice(index, 1);
+      }
+      this.isProcessing = false;
+      return;
+    }
+
     // Gérer le résultat final
     if (event.step === 'result' && event.data) {
       const response: ChatResponse = event.data;
+
+      // Vérifier si ambiguïté détectée (cas POST non-streaming)
+      if (response.ambiguityDetected?.hasAmbiguity) {
+        console.log('🔍 Ambiguïté détectée (POST):', response.ambiguityDetected);
+
+        // Récupérer la question originale
+        const userMessages = this.messages.filter(m => m.role === 'user');
+        const originalQuestion = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : '';
+
+        // Ouvrir le dialog de clarification
+        this.openClarificationDialog(
+          response.ambiguityDetected,
+          originalQuestion
+        );
+
+        // Supprimer le message assistant de la liste
+        const index = this.messages.indexOf(message);
+        if (index > -1) {
+          this.messages.splice(index, 1);
+        }
+        this.isProcessing = false;
+        return;
+      }
+
+      // Traiter la réponse normale
       message.response = response;
       this.lastResponse = response;
       this.sessionId = response.sessionId;
@@ -216,8 +276,162 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Met à jour l'état de la checklist en fonction de l'événement SSE reçu
+   */
+  private updateChecklistState(event: StreamEvent, message: ChatMessage): void {
+    if (!message.checklistState) {
+      message.checklistState = initChecklistState();
+    }
+
+    // Ignorer session_created et error
+    if (event.step === 'session_created' || event.step === 'error') {
+      return;
+    }
+
+    // Trouver l'item de checklist correspondant à cet événement
+    const checklistItem = getChecklistItemFromEvent(event.step);
+    if (!checklistItem) {
+      return;
+    }
+
+    // Déterminer le nouvel état
+    let newState: ChecklistItemState;
+
+    // Les événements *_result, result, et *_success indiquent la complétion
+    if (event.step.endsWith('_result') || event.step.endsWith('_success') || event.step === 'result') {
+      newState = 'completed';
+    } else {
+      // Les autres événements indiquent "in_progress"
+      newState = 'in_progress';
+    }
+
+    // Mettre à jour l'état
+    message.checklistState.set(checklistItem.id, newState);
+  }
+
   private generateId(): string {
     return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  }
+
+  /**
+   * Ouvre le dialog de clarification et gère la réponse utilisateur.
+   */
+  private openClarificationDialog(
+    ambiguityResponse: AmbiguityResponse,
+    originalQuestion: string
+  ): void {
+    const dialogRef = this.dialog.open(ClarificationDialogComponent, {
+      data: {
+        questions: ambiguityResponse.questions
+      } as ClarificationDialogData,
+      width: '600px',
+      disableClose: true,  // Empêcher fermeture en cliquant à l'extérieur
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe((clarificationContext: ClarificationContext | null) => {
+      if (clarificationContext) {
+        // User a confirmé → Relancer la requête avec le contexte
+        console.log('✅ Clarifications reçues:', clarificationContext);
+        this.resendMessageWithClarification(originalQuestion, clarificationContext);
+      } else {
+        // User a annulé → Réinitialiser l'état
+        console.log('❌ Clarification annulée');
+        this.isProcessing = false;
+      }
+    });
+  }
+
+  /**
+   * Renvoie la question originale avec le contexte de clarification.
+   */
+  private resendMessageWithClarification(
+    question: string,
+    clarificationContext: ClarificationContext
+  ): void {
+    this.isProcessing = true;
+
+    // Créer le message assistant pour la réponse
+    const assistantMessage: ChatMessage = {
+      id: this.generateId(),
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+      isStreaming: true,
+      streamingSteps: [],
+      checklistState: initChecklistState()
+    };
+
+    this.messages.push(assistantMessage);
+
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser || !currentUser.id) {
+      console.error('❌ User ID manquant');
+      assistantMessage.content = 'Erreur: Utilisateur non authentifié';
+      assistantMessage.isStreaming = false;
+      this.isProcessing = false;
+      return;
+    }
+
+    // Utiliser la nouvelle méthode avec clarificationContext
+    this.chatService.sendMessageWithClarification(
+      question,
+      currentUser.id,
+      clarificationContext,
+      this.sessionId ?? undefined,
+      false  // isChartDemanded - à ajuster selon le besoin
+    ).subscribe({
+      next: (response: ChatResponse) => {
+        console.log('✅ Réponse avec clarifications:', response);
+
+        // Vérifier à nouveau l'ambiguïté (cas d'ambiguïté persistante)
+        if (response.ambiguityDetected?.hasAmbiguity) {
+          console.error('⚠️ Ambiguïté persistante malgré clarifications');
+
+          // Afficher message d'erreur à l'utilisateur
+          assistantMessage.content = response.answer ||
+            "Désolé, je n'ai pas pu générer une requête précise malgré vos clarifications. Pourriez-vous reformuler votre question de manière plus spécifique ?";
+          assistantMessage.isStreaming = false;
+          this.isProcessing = false;
+          return;
+        }
+
+        // Traiter la réponse normale
+        assistantMessage.response = response;
+        this.lastResponse = response;
+        assistantMessage.isStreaming = false;
+
+        // Détecter et extraire les données JSON pour affichage en tableau
+        if (response.queryResults && Array.isArray(response.queryResults) && response.queryResults.length > 0) {
+          assistantMessage.hasJsonData = true;
+          assistantMessage.jsonData = response.queryResults;
+          const cleanedAnswer = this.removeJsonFromAnswer(response.answer);
+          assistantMessage.content = cleanedAnswer;
+        } else {
+          assistantMessage.content = response.answer;
+        }
+
+        // Mettre à jour la session
+        if (response.sessionId) {
+          this.sessionId = response.sessionId;
+        }
+
+        this.isProcessing = false;
+
+        // Refresh token stats and conversation list
+        if (this.chatDrawer) {
+          this.chatDrawer.refreshTokenStats();
+          this.chatDrawer.loadConversations();
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de l\'envoi avec clarifications:', error);
+        assistantMessage.content = 'Une erreur est survenue lors du traitement de votre demande.';
+        assistantMessage.isStreaming = false;
+        this.isProcessing = false;
+      }
+    });
   }
 
   onChatSelected(sessionId: string): void {
