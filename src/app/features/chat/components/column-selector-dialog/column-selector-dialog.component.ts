@@ -7,21 +7,25 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { TableWithColumns, ColumnInfo } from '../../../../core/services/column-discovery.service';
 
 /**
- * Structure d'une colonne sélectionnable
+ * Structure d'une colonne sélectionnable (interne au composant)
  */
 export interface SelectableColumn {
   id: string;
   label: string;
+  description?: string;
+  dataType?: string;
   selected: boolean;
 }
 
 /**
- * Structure d'une table avec ses colonnes
+ * Structure d'une table avec ses colonnes (interne au composant)
  */
 export interface TableColumns {
   tableName: string;
+  tableDescription?: string;
   columns: SelectableColumn[];
 }
 
@@ -29,6 +33,8 @@ export interface TableColumns {
  * Données passées au dialog lors de l'ouverture
  */
 export interface ColumnSelectorDialogData {
+  /** Tables avec colonnes découvertes par l'API */
+  discoveredTables?: TableWithColumns[];
   /** Colonnes pré-sélectionnées (optionnel) */
   preSelectedColumns?: string[];
 }
@@ -66,58 +72,21 @@ export class ColumnSelectorDialogComponent {
   searchTerm: string = '';
 
   /** Tables avec leurs colonnes */
-  tables: TableColumns[] = [
-    {
-      tableName: 'PRODUIT',
-      columns: [
-        { id: 'PRODUIT.ID_PRODUIT', label: 'ID PRODUIT', selected: false },
-        { id: 'PRODUIT.LIBELLE_PRODUIT', label: 'LIBELLE PRODUIT', selected: false },
-        { id: 'PRODUIT.CIBLE_PRODUIT', label: 'CIBLE PRODUIT', selected: false },
-        { id: 'PRODUIT.TYPE_PRODUIT', label: 'TYPE PRODUIT', selected: false },
-        { id: 'PRODUIT.MARQUE', label: 'MARQUE', selected: false }
-      ]
-    },
-    {
-      tableName: 'ANNONCEUR',
-      columns: [
-        { id: 'ANNONCEUR.ID_ANNONCEUR', label: 'ID ANNONCEUR', selected: false },
-        { id: 'ANNONCEUR.NUMERO_MANDAT', label: 'NUMERO MANDAT', selected: false },
-        { id: 'ANNONCEUR.NOM_ANNONCEUR', label: 'NOM ANNONCEUR', selected: false },
-        { id: 'ANNONCEUR.SECTEUR', label: 'SECTEUR', selected: false }
-      ]
-    },
-    {
-      tableName: 'BRIEF',
-      columns: [
-        { id: 'BRIEF.ID_BRIEF', label: 'ID BRIEF', selected: false },
-        { id: 'BRIEF.DATE_DEBUT', label: 'DATE DEBUT', selected: false },
-        { id: 'BRIEF.DATE_FIN', label: 'DATE FIN', selected: false },
-        { id: 'BRIEF.BUDGET', label: 'BUDGET', selected: false }
-      ]
-    },
-    {
-      tableName: 'CAMPAGNE',
-      columns: [
-        { id: 'CAMPAGNE.ID_CAMPAGNE', label: 'ID CAMPAGNE', selected: false },
-        { id: 'CAMPAGNE.NOM_CAMPAGNE', label: 'NOM CAMPAGNE', selected: false },
-        { id: 'CAMPAGNE.STATUT', label: 'STATUT', selected: false }
-      ]
-    },
-    {
-      tableName: 'DIFFUSION',
-      columns: [
-        { id: 'DIFFUSION.DATE_DIFFUSION', label: 'DATE DIFFUSION', selected: false },
-        { id: 'DIFFUSION.CHAINE', label: 'CHAINE', selected: false },
-        { id: 'DIFFUSION.HEURE', label: 'HEURE', selected: false },
-        { id: 'DIFFUSION.GRP', label: 'GRP', selected: false }
-      ]
-    }
-  ];
+  tables: TableColumns[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<ColumnSelectorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ColumnSelectorDialogData
   ) {
+    // Initialiser les tables depuis les données découvertes par l'API
+    if (data?.discoveredTables && data.discoveredTables.length > 0) {
+      this.tables = this.convertApiDataToTables(data.discoveredTables);
+    } else {
+      // Fallback sur des données vides si pas de données de l'API
+      console.warn('Aucune table découverte par l\'API');
+      this.tables = [];
+    }
+
     // Pré-sélectionner les colonnes si fournies
     if (data?.preSelectedColumns) {
       this.tables.forEach(table => {
@@ -128,6 +97,23 @@ export class ColumnSelectorDialogComponent {
         });
       });
     }
+  }
+
+  /**
+   * Convertit les données de l'API en format interne du composant
+   */
+  private convertApiDataToTables(apiTables: TableWithColumns[]): TableColumns[] {
+    return apiTables.map(apiTable => ({
+      tableName: apiTable.tableName,
+      tableDescription: apiTable.tableDescription,
+      columns: apiTable.columns.map(col => ({
+        id: col.id,
+        label: col.columnName,
+        description: col.description,
+        dataType: col.dataType,
+        selected: false
+      }))
+    }));
   }
 
   /**

@@ -5,19 +5,36 @@
   </h2>
 
   <mat-dialog-content>
-    <p class="confirm-message">Voulez-vous choisir les colonnes pour cette question ?</p>
-    <p class="question-preview">{{ data.question }}</p>
+    <!-- Message de confirmation -->
+    <ng-container *ngIf="!isLoading && !errorMessage">
+      <p class="confirm-message">Voulez-vous choisir les colonnes pour cette question ?</p>
+      <p class="question-preview">{{ data.question }}</p>
+    </ng-container>
+
+    <!-- Spinner de chargement -->
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p class="loading-message">Analyse de votre question en cours...</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="error-container" *ngIf="errorMessage">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p class="error-message">{{ errorMessage }}</p>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()" type="button">
-      Non
+    <button mat-button (click)="onCancel()" type="button" [disabled]="isLoading">
+      {{ errorMessage ? 'Fermer' : 'Non' }}
     </button>
     <button
       mat-raised-button
       color="primary"
       (click)="onConfirm()"
       type="button"
+      [disabled]="isLoading || errorMessage"
+      *ngIf="!errorMessage"
     >
       Oui
     </button>

@@ -10,7 +10,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ColumnSelectorDialogComponent, ColumnSelectorResult } from '../column-selector-dialog/column-selector-dialog.component';
-import { ColumnConfirmDialogComponent } from '../column-confirm-dialog/column-confirm-dialog.component';
+import { ColumnConfirmDialogComponent, ColumnConfirmDialogResult } from '../column-confirm-dialog/column-confirm-dialog.component';
+import { TableWithColumns } from '../../../../core/services/column-discovery.service';
 
 export interface QuestionSubmit {
   question: string;
@@ -39,12 +40,17 @@ export interface QuestionSubmit {
 export class InputBarComponent {
   @Input() disabled: boolean = false;
   @Input() maxMessagesReached: boolean = false;
+  @Input() userId?: number;
+  @Input() sessionId?: string;
   @Output() sendMessage = new EventEmitter<QuestionSubmit>();
 
   question: string = '';
   isChartDemanded: boolean = false;
   isExplanationDemanded: boolean = false;
   selectedColumns: string[] = [];
+
+  /** Tables découvertes par l'API (pour réutilisation) */
+  private discoveredTables: TableWithColumns[] = [];
 
   constructor(private dialog: MatDialog) {}
 
@@ -68,7 +74,9 @@ export class InputBarComponent {
         isExplanationDemanded: this.isExplanationDemanded
       });
       this.question = '';
-      // Garder les checkboxes cochées pour les prochaines questions
+      // Réinitialiser les colonnes sélectionnées pour la nouvelle question
+      this.selectedColumns = [];
+      this.discoveredTables = [];
     }
   }
 
@@ -81,30 +89,37 @@ export class InputBarComponent {
 
   /**
    * Gère le clic sur le bouton de sélection des colonnes
-   * Affiche d'abord une popup de confirmation avec la question
+   * Affiche d'abord une popup de confirmation, puis appelle l'API
    */
   onColumnSelectorClick(): void {
     const confirmDialogRef = this.dialog.open(ColumnConfirmDialogComponent, {
       panelClass: 'column-confirm-dialog-panel',
+      disableClose: true,
       data: {
-        question: this.question.trim()
+        question: this.question.trim(),
+        userId: this.userId,
+        sessionId: this.sessionId
       }
     });
 
-    confirmDialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.openColumnSelector();
+    confirmDialogRef.afterClosed().subscribe((result: ColumnConfirmDialogResult) => {
+      if (result?.confirmed && result.discoveryResponse?.tables) {
+        // Sauvegarder les tables découvertes
+        this.discoveredTables = result.discoveryResponse.tables;
+        // Ouvrir le dialog de sélection avec les données de l'API
+        this.openColumnSelector(result.discoveryResponse.tables);
       }
     });
   }
 
   /**
-   * Ouvre le dialog de sélection des colonnes
+   * Ouvre le dialog de sélection des colonnes avec les tables découvertes
    */
-  openColumnSelector(): void {
+  openColumnSelector(tables: TableWithColumns[]): void {
     const dialogRef = this.dialog.open(ColumnSelectorDialogComponent, {
       panelClass: 'column-selector-dialog-panel',
       data: {
+        discoveredTables: tables,
         preSelectedColumns: this.selectedColumns
       }
     });
