@@ -7,6 +7,17 @@
 
   <!-- Options de génération -->
   <div class="chart-option" *ngIf="!maxMessagesReached">
+    <button
+      class="column-selector-button"
+      (click)="onColumnSelectorClick()"
+      [disabled]="!hasMinimumWords"
+      matTooltip="{{ hasMinimumWords ? 'Sélectionner les colonnes à afficher dans les résultats' : 'Écrivez au moins 4 mots pour activer cette option' }}"
+    >
+      <mat-icon>view_column</mat-icon>
+      <span>Choisir les colonnes</span>
+      <span class="column-count" *ngIf="selectedColumns.length > 0">{{ selectedColumns.length }}</span>
+    </button>
+
     <label class="chart-checkbox-wrapper">
       <mat-checkbox
         [(ngModel)]="isExplanationDemanded"

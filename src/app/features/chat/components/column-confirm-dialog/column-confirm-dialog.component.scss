@@ -1,0 +1,74 @@
+.column-confirm-dialog {
+  background-color: #000000;
+  color: #ffffff;
+
+  h2[mat-dialog-title] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    margin: 0;
+    padding: 16px 20px 12px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #000000;
+
+    mat-icon {
+      color: #ffffff;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  mat-dialog-content {
+    padding: 0 20px 16px;
+    background-color: #000000;
+    color: #ffffff;
+
+    .confirm-message {
+      color: #ffffff;
+      font-size: 14px;
+      margin: 0 0 12px 0;
+    }
+
+    .question-preview {
+      color: #999999;
+      font-size: 13px;
+      font-style: italic;
+      margin: 0;
+      padding: 10px 12px;
+      background-color: #1a1a1a;
+      border-radius: 6px;
+      border-left: 3px solid #444444;
+    }
+  }
+
+  mat-dialog-actions {
+    padding: 12px 20px 16px;
+    gap: 8px;
+    background-color: #000000;
+  }
+}
+
+::ng-deep {
+  .column-confirm-dialog-panel {
+    .mat-mdc-dialog-container,
+    .mdc-dialog__surface {
+      background-color: #000000 !important;
+      border-radius: 12px !important;
+    }
+
+    .mat-mdc-button,
+    .mat-mdc-raised-button {
+      &.mat-unthemed {
+        color: #ffffff !important;
+      }
+
+      &.mat-primary {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  }
+}

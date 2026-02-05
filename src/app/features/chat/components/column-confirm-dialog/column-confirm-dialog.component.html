@@ -1,0 +1,25 @@
+<div class="column-confirm-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>view_column</mat-icon>
+    Sélection des colonnes
+  </h2>
+
+  <mat-dialog-content>
+    <p class="confirm-message">Voulez-vous choisir les colonnes pour cette question ?</p>
+    <p class="question-preview">{{ data.question }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" type="button">
+      Non
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      type="button"
+    >
+      Oui
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -19,6 +19,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 body {
@@ -42,4 +43,34 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+// Panel du dialog de sélection des colonnes - thème sombre
+.column-selector-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background-color: #000000 !important;
+    border-radius: 12px !important;
+  }
+}
+
+// Panel du dialog de confirmation - thème sombre
+.column-confirm-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background-color: #000000 !important;
+    border-radius: 12px !important;
+  }
+
+  .mat-mdc-button,
+  .mat-mdc-raised-button {
+    &.mat-unthemed {
+      color: #ffffff !important;
+    }
+
+    &.mat-primary {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+  }
 }

@@ -1,0 +1,82 @@
+<div class="column-selector-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>view_column</mat-icon>
+    Sélection des colonnes
+  </h2>
+
+  <mat-dialog-content>
+    <p class="dialog-description">
+      Choisissez les colonnes que vous souhaitez voir apparaître dans les résultats.
+      <span class="selected-count" *ngIf="selectedCount > 0">
+        ({{ selectedCount }} colonne{{ selectedCount > 1 ? 's' : '' }} sélectionnée{{ selectedCount > 1 ? 's' : '' }})
+      </span>
+    </p>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Rechercher une table ou colonne..."
+        class="search-input"
+      />
+      <button
+        *ngIf="searchTerm"
+        class="clear-search-btn"
+        (click)="clearSearch()"
+        type="button"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="tables-container">
+      <ng-container *ngFor="let table of tables">
+        <div class="table-group" *ngIf="isTableVisible(table)">
+          <div class="table-header">
+            <mat-checkbox
+              [checked]="isTableAllSelected(table)"
+              [indeterminate]="isTablePartiallySelected(table)"
+              (change)="toggleTable(table)"
+              class="table-checkbox"
+            >
+              {{ table.tableName }}
+            </mat-checkbox>
+          </div>
+
+          <div class="columns-list">
+            <ng-container *ngFor="let column of table.columns">
+              <mat-checkbox
+                *ngIf="isColumnVisible(table, column)"
+                [(ngModel)]="column.selected"
+                class="column-checkbox"
+              >
+                {{ column.label }}
+              </mat-checkbox>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onReset()" type="button" class="reset-button">
+      <mat-icon>restart_alt</mat-icon>
+      Réinitialiser
+    </button>
+    <div class="spacer"></div>
+    <button mat-button (click)="onCancel()" type="button">
+      Annuler
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      type="button"
+    >
+      <mat-icon>check</mat-icon>
+      Confirmer
+    </button>
+  </mat-dialog-actions>
+</div>
