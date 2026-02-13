@@ -1,13 +1,19 @@
 <div class="message-wrapper" [class.user-message]="message.role === 'user'" [class.bot-message]="message.role === 'assistant'">
   <!-- Avatar -->
   <div class="message-avatar" *ngIf="message.role === 'user'">
-    <mat-icon class="avatar-icon">account_circle</mat-icon>
+    <img src="/icons/remini.jpg" alt="Avatar" class="avatar-image">
   </div>
 
   <div class="message-content-wrapper">
     <!-- N'afficher la bulle que si elle a du contenu ou si c'est un message user -->
-    <mat-card class="message-bubble" *ngIf="message.role === 'user' || message.content || (message.streamingSteps && message.streamingSteps.length > 0) || message.hasJsonData">
+    <mat-card class="message-bubble" *ngIf="message.role === 'user' || message.content || (message.streamingSteps && message.streamingSteps.length > 0) || message.hasJsonData || message.subResponses">
       <mat-card-content>
+        <!-- Encart d'explication métier (si présent) -->
+        <div *ngIf="message.response && message.response.businessExplanation" class="business-explanation">
+          <div class="explanation-header">Explication</div>
+          <div class="explanation-text">{{ message.response.businessExplanation }}</div>
+        </div>
+
         <!-- Contenu du message -->
         <div class="message-content" [innerHTML]="message.content"></div>
 
@@ -17,8 +23,16 @@
           [chartData]="message.response.chartData!">
         </app-chart-renderer>
 
-        <!-- Tableau JSON (si des données JSON sont présentes) -->
-        <app-json-table *ngIf="message.hasJsonData && message.jsonData" [data]="message.jsonData"></app-json-table>
+        <!-- Tableau JSON unique (quand pas de sub-responses) -->
+        <app-json-table *ngIf="message.hasJsonData && message.jsonData && !message.subResponses" [data]="message.jsonData" [highlightedColumns]="message.selectedColumns || []"></app-json-table>
+
+        <!-- Multi-tableaux (sub-responses de l'orchestrateur) -->
+        <div *ngIf="message.subResponses && message.subResponses.length > 0" class="sub-responses">
+          <div *ngFor="let sub of message.subResponses" class="sub-response-section">
+            <div class="sub-response-title">{{ sub.title }}</div>
+            <app-json-table [data]="sub.queryResults"></app-json-table>
+          </div>
+        </div>
 
         <!-- Timestamp -->
         <div class="message-timestamp">

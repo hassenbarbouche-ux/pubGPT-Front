@@ -1,31 +1,32 @@
 <mat-card class="json-table-card">
   <mat-card-content>
     <div class="table-container">
-      <!-- Header draggable personnalisé -->
-      <div class="custom-header" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-        <div class="header-cell row-number-header"></div>
-        <div class="header-cell"
-             *ngFor="let column of displayedColumns"
-             cdkDrag
-             (click)="sortData(column)">
-          <div class="header-content">
-            {{ formatColumnName(column) }}
-            <mat-icon class="sort-icon" *ngIf="getSortIcon(column)">{{ getSortIcon(column) }}</mat-icon>
-          </div>
-        </div>
-      </div>
-
-      <!-- Table des données -->
-      <div class="data-rows">
-        <div class="data-row" *ngFor="let row of dataSource.data; let i = index">
-          <div class="data-cell row-number-cell">
-            <div class="row-number-badge">{{ getRowNumber(i) }}</div>
-          </div>
-          <div class="data-cell" *ngFor="let column of displayedColumns">
-            {{ formatValue(row[column]) }}
-          </div>
-        </div>
-      </div>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th class="row-number-header"></th>
+            <th *ngFor="let column of displayedColumns"
+                (click)="sortData(column)"
+                class="sortable-header">
+              <div class="header-content">
+                {{ formatColumnName(column) }}
+                <mat-icon class="sort-icon" *ngIf="getSortIcon(column)">{{ getSortIcon(column) }}</mat-icon>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of dataSource.data; let i = index">
+            <td class="row-number-cell">
+              <div class="row-number-badge">{{ getRowNumber(i) }}</div>
+            </td>
+            <td *ngFor="let column of displayedColumns"
+                [class.highlighted-cell]="isHighlighted(column)">
+              {{ formatValue(row[column]) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Bouton Expand/Collapse pour tableaux > 10 lignes -->

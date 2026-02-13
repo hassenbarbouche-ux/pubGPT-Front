@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CsvExportUtil } from '../../../../core/utils/csv-export.util';
 
 /**
@@ -16,13 +15,17 @@ import { CsvExportUtil } from '../../../../core/utils/csv-export.util';
 @Component({
   selector: 'app-json-table',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule, MatSortModule, DragDropModule],
+  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule, MatSortModule],
   templateUrl: './json-table.component.html',
   styleUrls: ['./json-table.component.scss']
 })
 export class JsonTableComponent implements OnInit, AfterViewInit {
   @Input() data: any[] = [];
+  @Input() highlightedColumns: string[] = [];
   @ViewChild(MatSort) sort!: MatSort;
+
+  /** Set of column names (sans préfixe TABLE.) à mettre en surbrillance */
+  private highlightedColumnNames: Set<string> = new Set();
 
   displayedColumns: string[] = [];
   displayedColumnsWithRowNumber: string[] = [];
@@ -79,7 +82,25 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
         }
       });
 
-      this.displayedColumns = Array.from(allKeys);
+      // Construire le set des noms de colonnes à mettre en surbrillance
+      // Le format d'entrée est "TABLE.COLUMN", on extrait le nom de colonne
+      this.highlightedColumnNames = new Set(
+        this.highlightedColumns.map(col => {
+          const parts = col.split('.');
+          return parts.length > 1 ? parts[parts.length - 1] : col;
+        })
+      );
+
+      // Réordonner : colonnes sélectionnées en premier, puis les autres
+      const allColumnsArray = Array.from(allKeys);
+      if (this.highlightedColumnNames.size > 0) {
+        const prioritized = allColumnsArray.filter(col => this.highlightedColumnNames.has(col));
+        const rest = allColumnsArray.filter(col => !this.highlightedColumnNames.has(col));
+        this.displayedColumns = [...prioritized, ...rest];
+      } else {
+        this.displayedColumns = allColumnsArray;
+      }
+
       this.displayedColumnsWithRowNumber = ['rowNumber', ...this.displayedColumns];
     }
   }
@@ -234,14 +255,6 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
     console.log(`Export CSV: ${this.tableData.length} lignes exportées`);
   }
 
-  /**
-   * Gère le drop event pour réorganiser les colonnes
-   */
-  drop(event: CdkDragDrop<string[]>): void {
-    // On doit soustraire 1 car la première cellule est le numéro de ligne (non draggable)
-    moveItemInArray(this.displayedColumns, event.previousIndex, event.currentIndex);
-    this.displayedColumnsWithRowNumber = ['rowNumber', ...this.displayedColumns];
-  }
 
   /**
    * Tri manuel des données
@@ -307,5 +320,12 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
       return null;
     }
     return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  /**
+   * Vérifie si une colonne fait partie des colonnes sélectionnées par l'utilisateur
+   */
+  isHighlighted(column: string): boolean {
+    return this.highlightedColumnNames.has(column);
   }
 }

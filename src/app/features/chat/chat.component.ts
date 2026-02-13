@@ -43,6 +43,11 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
+  // ✅ FIX: Stocker les flags pour les préserver après ambiguïté
+  private currentIsChartDemanded: boolean = false;
+  private currentIsExplanationDemanded: boolean = false;
+  private currentSelectedColumns: string[] = [];
+
   // Limite de messages (5 questions utilisateur max)
   readonly MAX_USER_MESSAGES = 5;
 
@@ -78,6 +83,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     const question = typeof questionSubmit === 'string' ? questionSubmit : questionSubmit.question;
     const isChartDemanded = typeof questionSubmit === 'string' ? false : questionSubmit.isChartDemanded;
     const isExplanationDemanded = typeof questionSubmit === 'string' ? false : (questionSubmit.isExplanationDemanded || false);
+    const selectedColumns = typeof questionSubmit === 'string' ? [] : (questionSubmit.selectedColumns || []);
+
+    // ✅ FIX: Stocker les flags pour les préserver après ambiguïté
+    this.currentIsChartDemanded = isChartDemanded;
+    this.currentIsExplanationDemanded = isExplanationDemanded;
+    this.currentSelectedColumns = selectedColumns;
 
     // Ajouter le message utilisateur
     const userMessage: ChatMessage = {
@@ -100,11 +111,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     // Créer une référence pour le message assistant qui sera créé plus tard
     let assistantMessage: ChatMessage | null = null;
 
-    // TODO: Implémenter isExplanationDemanded dans le backend
-    console.log('Options:', { isChartDemanded, isExplanationDemanded });
+    console.log('Options:', { isChartDemanded, isExplanationDemanded, selectedColumns });
 
-    // Appeler le service SSE avec userId et isChartDemanded
-    this.subscription = this.chatService.streamChat(question, currentUser.id, this.sessionId ?? undefined, isChartDemanded).subscribe({
+    // Appeler le service SSE avec userId, isChartDemanded, isExplanationDemanded et selectedColumns
+    this.subscription = this.chatService.streamChat(question, currentUser.id, this.sessionId ?? undefined, isChartDemanded, isExplanationDemanded, selectedColumns.length > 0 ? selectedColumns : undefined).subscribe({
       next: (event: StreamEvent) => {
         console.log('SSE Event received:', {
           step: event.step,
@@ -248,8 +258,19 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.lastResponse = response;
       this.sessionId = response.sessionId;
 
+      // Attacher les colonnes sélectionnées au message pour le highlighting
+      if (this.currentSelectedColumns.length > 0) {
+        message.selectedColumns = [...this.currentSelectedColumns];
+      }
+
       // Détecter et extraire les données JSON pour affichage en tableau
-      if (response.queryResults && Array.isArray(response.queryResults) && response.queryResults.length > 0) {
+      if (response.subResponses && response.subResponses.length > 0) {
+        // Multi-tableaux : stocker les sub-responses, pas de jsonData unique
+        message.subResponses = response.subResponses;
+        message.hasJsonData = false;
+        const cleanedAnswer = this.removeJsonFromAnswer(response.answer);
+        message.content = cleanedAnswer;
+      } else if (response.queryResults && Array.isArray(response.queryResults) && response.queryResults.length > 0) {
         message.hasJsonData = true;
         message.jsonData = response.queryResults;
         // Supprimer le JSON de la réponse textuelle si présent
@@ -289,6 +310,86 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Gérer l'événement planner_requested (début du planner)
+    if (event.step === 'planner_requested' || event.step === 'planner_execution') {
+      message.isPlannerVisible = true;
+      message.checklistState.set('sql_generation', 'in_progress');
+      console.log(`🔵 Planner started: isPlannerVisible = true`);
+      return;
+    }
+
+    // Gérer les événements du Planner (planner_strategy, planner_thinking, planner_synthesis)
+    if (event.step.startsWith('planner_') && event.data?.phase && event.data?.status) {
+      const plannerPhase = event.data.phase as string;
+      const plannerStatus = event.data.status as 'in_progress' | 'completed';
+
+      // Activer la visibilité du planner
+      message.isPlannerVisible = true;
+
+      // Mettre à jour l'état du sous-item du planner
+      message.checklistState.set(plannerPhase, plannerStatus);
+
+      // S'assurer que sql_generation est en in_progress quand le planner est actif
+      if (plannerStatus === 'in_progress') {
+        message.checklistState.set('sql_generation', 'in_progress');
+      }
+
+      console.log(`🔵 Planner event: ${plannerPhase} -> ${plannerStatus}`);
+      return;
+    }
+
+    // Gérer planner_completed
+    if (event.step === 'planner_completed') {
+      // Marquer tous les sous-items comme completed
+      message.checklistState.set('planner_strategy', 'completed');
+      message.checklistState.set('planner_thinking', 'completed');
+      message.checklistState.set('planner_synthesis', 'completed');
+      console.log(`🔵 Planner completed`);
+      return;
+    }
+
+    // ========== Orchestrator events ==========
+
+    // Entrée en mode orchestrateur : masquer sql_generation, activer orchestration
+    if (event.step === 'orchestrator') {
+      message.isOrchestratorVisible = true;
+      message.checklistState.set('sql_generation', 'skipped');
+      message.checklistState.set('orchestration', 'in_progress');
+      console.log(`🎭 Orchestrator started`);
+      return;
+    }
+
+    // Reasoning de l'orchestrateur : mettre à jour le texte affiché
+    if (event.step === 'orchestrator_reasoning') {
+      message.isOrchestratorVisible = true;
+      message.orchestratorReasoning = event.data?.reasoning || event.message;
+      message.checklistState.set('orchestration', 'in_progress');
+      console.log(`🎭 Orchestrator reasoning: ${message.orchestratorReasoning?.substring(0, 80)}...`);
+      return;
+    }
+
+    // Plan de l'orchestrateur : le plan est arrivé, on reste in_progress
+    if (event.step === 'orchestrator_plan') {
+      message.isOrchestratorVisible = true;
+      message.checklistState.set('orchestration', 'in_progress');
+      console.log(`🎭 Orchestrator plan received: ${event.data?.totalStepsEstimated} steps`);
+      return;
+    }
+
+    // Thinking/Task de l'orchestrateur : rester in_progress
+    if (event.step === 'orchestrator_thinking' || event.step === 'orchestrator_task') {
+      message.checklistState.set('orchestration', 'in_progress');
+      return;
+    }
+
+    // Synthèse : orchestration terminée
+    if (event.step === 'orchestrator_synthesis') {
+      message.checklistState.set('orchestration', 'completed');
+      message.orchestratorReasoning = event.message;
+      console.log(`🎭 Orchestrator synthesis`);
+      return;
+    }
+
     // Trouver l'item de checklist correspondant à cet événement
     const checklistItem = getChecklistItemFromEvent(event.step);
     if (!checklistItem) {
@@ -323,7 +424,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   ): void {
     const dialogRef = this.dialog.open(ClarificationDialogComponent, {
       data: {
-        questions: ambiguityResponse.questions
+        questions: ambiguityResponse.questions,
+        isChartDemanded: this.currentIsChartDemanded,  // ✅ FIX: Passer les flags
+        isExplanationDemanded: this.currentIsExplanationDemanded
       } as ClarificationDialogData,
       width: '600px',
       disableClose: true,  // Empêcher fermeture en cliquant à l'extérieur
@@ -345,6 +448,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   /**
    * Renvoie la question originale avec le contexte de clarification.
+   *
+   * ✅ FIX: Utilise maintenant streamChatWithClarification() (SSE) au lieu de
+   * sendMessageWithClarification() (POST) pour éviter le problème de routage
+   * vers ChatOrchestrationService.
    */
   private resendMessageWithClarification(
     question: string,
@@ -374,49 +481,44 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Utiliser la nouvelle méthode avec clarificationContext
-    this.chatService.sendMessageWithClarification(
+    // ✅ FIX: Récupérer les flags depuis le clarificationContext
+    const isChartDemanded = clarificationContext.isChartDemanded ?? false;
+    const isExplanationDemanded = clarificationContext.isExplanationDemanded ?? false;
+
+    console.log('🔄 [SSE] Envoi avec clarifications via SSE:', { question, clarificationContext });
+
+    // ✅ FIX: Utiliser streamChatWithClarification (SSE) au lieu de sendMessageWithClarification (POST)
+    this.subscription = this.chatService.streamChatWithClarification(
       question,
       currentUser.id,
       clarificationContext,
       this.sessionId ?? undefined,
-      false  // isChartDemanded - à ajuster selon le besoin
+      isChartDemanded,
+      isExplanationDemanded,
+      this.currentSelectedColumns.length > 0 ? this.currentSelectedColumns : undefined
     ).subscribe({
-      next: (response: ChatResponse) => {
-        console.log('✅ Réponse avec clarifications:', response);
+      next: (event: StreamEvent) => {
+        console.log('🔄 [SSE] Event reçu après clarification:', event.step);
 
-        // Vérifier à nouveau l'ambiguïté (cas d'ambiguïté persistante)
-        if (response.ambiguityDetected?.hasAmbiguity) {
-          console.error('⚠️ Ambiguïté persistante malgré clarifications');
-
-          // Afficher message d'erreur à l'utilisateur
-          assistantMessage.content = response.answer ||
-            "Désolé, je n'ai pas pu générer une requête précise malgré vos clarifications. Pourriez-vous reformuler votre question de manière plus spécifique ?";
-          assistantMessage.isStreaming = false;
-          this.isProcessing = false;
+        // Gérer la session créée sans créer de bulle
+        if (event.step === 'session_created') {
+          if (event.data?.sessionId) {
+            this.sessionId = event.data.sessionId;
+          }
           return;
         }
 
-        // Traiter la réponse normale
-        assistantMessage.response = response;
-        this.lastResponse = response;
+        // Traiter l'événement
+        this.handleStreamEvent(event, assistantMessage);
+      },
+      error: (error) => {
+        console.error('❌ Erreur SSE lors de l\'envoi avec clarifications:', error);
+        assistantMessage.content = 'Une erreur est survenue lors du traitement de votre demande.';
         assistantMessage.isStreaming = false;
-
-        // Détecter et extraire les données JSON pour affichage en tableau
-        if (response.queryResults && Array.isArray(response.queryResults) && response.queryResults.length > 0) {
-          assistantMessage.hasJsonData = true;
-          assistantMessage.jsonData = response.queryResults;
-          const cleanedAnswer = this.removeJsonFromAnswer(response.answer);
-          assistantMessage.content = cleanedAnswer;
-        } else {
-          assistantMessage.content = response.answer;
-        }
-
-        // Mettre à jour la session
-        if (response.sessionId) {
-          this.sessionId = response.sessionId;
-        }
-
+        this.isProcessing = false;
+      },
+      complete: () => {
+        assistantMessage.isStreaming = false;
         this.isProcessing = false;
 
         // Refresh token stats and conversation list
@@ -424,12 +526,6 @@ export class ChatComponent implements OnInit, OnDestroy {
           this.chatDrawer.refreshTokenStats();
           this.chatDrawer.loadConversations();
         }
-      },
-      error: (error) => {
-        console.error('❌ Erreur lors de l\'envoi avec clarifications:', error);
-        assistantMessage.content = 'Une erreur est survenue lors du traitement de votre demande.';
-        assistantMessage.isStreaming = false;
-        this.isProcessing = false;
       }
     });
   }
