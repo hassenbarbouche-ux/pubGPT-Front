@@ -27,6 +27,20 @@ export interface ChatResponse {
    * Les autres champs (answer, generatedSql, queryResults) seront null quand une ambiguïté est détectée.
    */
   ambiguityDetected?: AmbiguityResponse | null;
+
+  /**
+   * Explication métier de la requête SQL générée.
+   * Explique en 4-5 phrases comment la requête répond à la question utilisateur.
+   * Présent uniquement si isExplanationDemanded=true et SQL généré avec succès.
+   */
+  businessExplanation?: string | null;
+
+  /**
+   * Sous-réponses pour affichage multi-tableaux.
+   * Présent quand l'orchestrateur produit 2+ jeux de données distincts.
+   * Si présent, le frontend affiche chaque sub-response comme section titrée + tableau.
+   */
+  subResponses?: SubResponse[] | null;
 }
 
 /**
@@ -57,3 +71,12 @@ export interface SqlConfidenceScore {
  * Niveaux de confiance possibles
  */
 export type ConfidenceLevel = 'TRES_ELEVE' | 'ELEVE' | 'MOYEN' | 'FAIBLE';
+
+/**
+ * Sous-réponse pour affichage multi-tableaux.
+ * Chaque SubResponse correspond à un jeu de données avec son titre.
+ */
+export interface SubResponse {
+  title: string;
+  queryResults: Record<string, any>[];
+}

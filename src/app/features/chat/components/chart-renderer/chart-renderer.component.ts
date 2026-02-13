@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartData, ChartType } from '../../../../core/models';
@@ -17,11 +17,10 @@ export class ChartRendererComponent implements OnInit {
   ChartType = ChartType;
 
   // Configuration du graphique
-  view: [number, number] = [700, 400]; // Largeur par défaut
   showXAxis = true;
   showYAxis = true;
   gradient = false;
-  showLegend = true;
+  showLegend = false; // Légende désactivée
   showXAxisLabel = true;
   showYAxisLabel = true;
   xAxisLabel = '';
@@ -32,7 +31,7 @@ export class ChartRendererComponent implements OnInit {
   // Données formatées pour NGX-Charts
   chartDataFormatted: any[] = [];
 
-  constructor(private elementRef: ElementRef) {}
+  constructor() {}
 
   ngOnInit(): void {
     if (!this.chartData || !this.chartData.visualization) {
@@ -49,9 +48,8 @@ export class ChartRendererComponent implements OnInit {
     // Configurer le thème grayscale
     this.colorScheme = this.getGrayscaleTheme();
 
-    // Ajuster la largeur au container (sera pris par le CSS)
-    // La largeur sera automatiquement adaptée par le CSS width: 100%
-    this.view = [700, 400];
+    // La largeur est undefined pour permettre au graphique d'être responsive
+    // Il prendra automatiquement toute la largeur du container parent
 
     // Formater les données selon le type de graphique
     this.formatChartData();

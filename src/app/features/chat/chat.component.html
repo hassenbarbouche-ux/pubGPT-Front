@@ -1,5 +1,6 @@
 <!-- Drawer pour l'historique -->
 <app-chat-drawer
+  #chatDrawer
   [(isOpen)]="isDrawerOpen"
   (chatSelected)="onChatSelected($event)"
   (newChat)="onNewChat()">

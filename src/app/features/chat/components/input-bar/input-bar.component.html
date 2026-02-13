@@ -43,10 +43,17 @@
 
   <div class="input-bar-container">
     <div class="input-wrapper">
+      <div
+        class="input-highlight"
+        [innerHTML]="highlightedHtml"
+        aria-hidden="true"
+      ></div>
       <input
         type="text"
         class="question-input"
         [(ngModel)]="question"
+        (input)="onInputChange()"
+        (paste)="onPaste($event)"
         (keypress)="onKeyPress($event)"
         [disabled]="isInputDisabled"
         placeholder="Posez votre question"

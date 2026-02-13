@@ -46,13 +46,17 @@
 
           <div class="columns-list">
             <ng-container *ngFor="let column of table.columns">
-              <mat-checkbox
-                *ngIf="isColumnVisible(table, column)"
-                [(ngModel)]="column.selected"
-                class="column-checkbox"
-              >
-                {{ column.label }}
-              </mat-checkbox>
+              <div class="column-item" *ngIf="isColumnVisible(table, column)">
+                <mat-checkbox
+                  [(ngModel)]="column.selected"
+                  class="column-checkbox"
+                >
+                  {{ column.label }}
+                </mat-checkbox>
+                <span class="column-description" *ngIf="column.description">
+                  {{ column.description }}
+                </span>
+              </div>
             </ng-container>
           </div>
         </div>

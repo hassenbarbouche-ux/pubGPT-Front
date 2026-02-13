@@ -16,6 +16,12 @@ import { ClarificationQuestion, ClarificationAnswer, ClarificationContext } from
 export interface ClarificationDialogData {
   /** Liste des questions de clarification à afficher */
   questions: ClarificationQuestion[];
+
+  /** ✅ FIX: Flag graphique à préserver */
+  isChartDemanded?: boolean;
+
+  /** ✅ FIX: Flag explication à préserver */
+  isExplanationDemanded?: boolean;
 }
 
 /**
@@ -149,8 +155,11 @@ export class ClarificationDialogComponent implements OnInit {
       }
     });
 
+    // ✅ FIX: Inclure les flags dans le contexte de clarification
     const clarificationContext: ClarificationContext = {
-      userAnswers
+      userAnswers,
+      isChartDemanded: this.data.isChartDemanded,
+      isExplanationDemanded: this.data.isExplanationDemanded
     };
 
     // Fermer le dialog et retourner le contexte

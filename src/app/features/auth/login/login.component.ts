@@ -13,7 +13,7 @@ import { LoginRequest } from '../../../core/models';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  backgroundVideo = 'assets/videos/background.mp4';
+  backgroundVideo = '/videos/video.mp4';
 
   login = '';
   password = '';

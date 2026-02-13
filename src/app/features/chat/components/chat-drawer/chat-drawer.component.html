@@ -5,9 +5,6 @@
     <button mat-icon-button class="menu-button" (click)="toggleDrawer()">
       <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
-    <button mat-icon-button class="new-chat-button" (click)="createNewChat()">
-      <mat-icon>edit</mat-icon>
-    </button>
   </div>
 
   <!-- Bouton Nouveau Chat -->
@@ -15,6 +12,26 @@
     <div class="chat-item new-chat-item" (click)="createNewChat()">
       <mat-icon class="chat-icon">edit_square</mat-icon>
       <span>Nouveau Chat</span>
+    </div>
+
+    <!-- Projets Suivis avec sous-menu -->
+    <div class="projects-container">
+      <div class="chat-item new-chat-item" (click)="toggleProjectsList()">
+        <mat-icon class="chat-icon">folder_open</mat-icon>
+        <span>Projets Suivis</span>
+        <mat-icon class="expand-icon">{{ showProjectsList ? 'expand_more' : 'chevron_right' }}</mat-icon>
+      </div>
+
+      <!-- Liste des projets (sous-items) -->
+      <div class="projects-list" *ngIf="showProjectsList">
+        <div
+          *ngFor="let project of availableProjects"
+          class="project-sub-item"
+          (click)="onProjectClick(project.id)">
+          <mat-icon class="project-sub-icon">folder</mat-icon>
+          <span>{{ project.name }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -36,15 +53,61 @@
 
     <!-- Liste des conversations -->
     <div class="chat-list">
+      <!-- Loading state -->
+      <div *ngIf="isLoadingConversations" class="loading-conversations">
+        Chargement des conversations...
+      </div>
+
+      <!-- Conversations list -->
       <div
         *ngFor="let chat of chatHistory"
-        class="chat-item"
-        (click)="selectChat(chat.id)">
-        {{ chat.title }}
+        class="chat-item-wrapper"
+        [class.active]="chat.sessionId === selectedSessionId">
+        <div class="chat-item" (click)="selectChat(chat.sessionId)">
+          <div class="chat-timestamp">{{ chat.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="chat-title">{{ chat.title }}</div>
+        </div>
+
+        <!-- Menu button -->
+        <button mat-icon-button class="chat-menu-button" (click)="toggleChatMenu(chat.sessionId, $event)">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <!-- Chat menu -->
+        <div class="chat-menu" *ngIf="openChatMenuId === chat.sessionId" (click)="$event.stopPropagation()">
+          <button
+            class="chat-menu-item"
+            (mouseenter)="showProjectSubmenu = true"
+            (mouseleave)="onProjectMenuLeave()">
+            <mat-icon>folder</mat-icon>
+            <span>Affecter à un projet</span>
+            <mat-icon class="arrow-icon">chevron_right</mat-icon>
+
+            <!-- Projects submenu -->
+            <div
+              class="projects-submenu"
+              *ngIf="showProjectSubmenu"
+              (click)="$event.stopPropagation()"
+              (mouseenter)="onProjectMenuEnter()"
+              (mouseleave)="showProjectSubmenu = false">
+              <button
+                *ngFor="let project of availableProjects"
+                class="project-item"
+                (click)="assignChatToProject(chat.sessionId, project.id)">
+                <mat-icon>folder_open</mat-icon>
+                <span>{{ project.name }}</span>
+              </button>
+            </div>
+          </button>
+          <button class="chat-menu-item delete" (click)="onDeleteChat(chat.sessionId)">
+            <mat-icon>delete</mat-icon>
+            <span>Supprimer</span>
+          </button>
+        </div>
       </div>
 
       <!-- Message si aucune conversation -->
-      <div *ngIf="chatHistory.length === 0" class="no-chats">
+      <div *ngIf="!isLoadingConversations && chatHistory.length === 0" class="no-chats">
         Aucune conversation pour le moment
       </div>
     </div>
@@ -54,22 +117,37 @@
   <div class="drawer-footer">
     <!-- Token Usage -->
     <div class="token-usage-section">
-      <div class="token-message">
-        37% des tokens utilisés
+      <div class="token-message" [class.quota-exceeded]="tokenStats?.quotaExceeded">
+        {{ getTokenMessage() }}
       </div>
       <div class="token-bar-container">
-        <div class="token-bar"></div>
+        <div class="token-bar"
+             [class]="getTokenBarColorClass()"
+             [style.width.%]="tokenStats?.usagePercentage || 0">
+        </div>
       </div>
     </div>
 
     <!-- User Info -->
-    <div class="user-info">
+    <div class="user-info" (click)="toggleUserMenu()">
       <div class="user-avatar">
-        <mat-icon>person</mat-icon>
+        <img src="/icons/remini.jpg" alt="Avatar" class="avatar-image">
       </div>
       <div class="user-details">
         <div class="user-access-badge">Full Access</div>
-        <span class="user-email">userexample.com</span>
+        <span class="user-email">{{ getUserLogin() }}</span>
+      </div>
+
+      <!-- User Menu -->
+      <div class="user-menu" *ngIf="showUserMenu" (click)="$event.stopPropagation()">
+        <button class="user-menu-item" (click)="onConfiguration()">
+          <mat-icon>settings</mat-icon>
+          <span>Configuration</span>
+        </button>
+        <button class="user-menu-item" (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Déconnexion</span>
+        </button>
       </div>
     </div>
   </div>

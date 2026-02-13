@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,11 +13,14 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ColumnSelectorDialogComponent, ColumnSelectorResult } from '../column-selector-dialog/column-selector-dialog.component';
 import { ColumnConfirmDialogComponent, ColumnConfirmDialogResult } from '../column-confirm-dialog/column-confirm-dialog.component';
 import { TableWithColumns } from '../../../../core/services/column-discovery.service';
+import { GlossaryService } from '../../../../core/services/glossary.service';
 
 export interface QuestionSubmit {
   question: string;
   isChartDemanded: boolean;
   isExplanationDemanded: boolean;
+  /** Colonnes sélectionnées par l'utilisateur (optionnel) */
+  selectedColumns?: string[];
 }
 
 @Component({
@@ -48,11 +52,16 @@ export class InputBarComponent {
   isChartDemanded: boolean = false;
   isExplanationDemanded: boolean = false;
   selectedColumns: string[] = [];
+  highlightedHtml: SafeHtml = '';
 
   /** Tables découvertes par l'API (pour réutilisation) */
   private discoveredTables: TableWithColumns[] = [];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private glossaryService: GlossaryService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   get isInputDisabled(): boolean {
     return this.disabled || this.maxMessagesReached;
@@ -66,14 +75,26 @@ export class InputBarComponent {
     return words.length >= 4;
   }
 
+  onInputChange(): void {
+    const raw = this.glossaryService.buildHighlightedHtml(this.question);
+    this.highlightedHtml = this.sanitizer.bypassSecurityTrustHtml(raw);
+  }
+
+  onPaste(_event: ClipboardEvent): void {
+    // Let Angular update the model first, then highlight
+    setTimeout(() => this.onInputChange());
+  }
+
   onSend(): void {
     if (this.question.trim() && !this.isInputDisabled) {
       this.sendMessage.emit({
         question: this.question.trim(),
         isChartDemanded: this.isChartDemanded,
-        isExplanationDemanded: this.isExplanationDemanded
+        isExplanationDemanded: this.isExplanationDemanded,
+        selectedColumns: this.selectedColumns.length > 0 ? this.selectedColumns : undefined
       });
       this.question = '';
+      this.highlightedHtml = '';
       // Réinitialiser les colonnes sélectionnées pour la nouvelle question
       this.selectedColumns = [];
       this.discoveredTables = [];
@@ -89,9 +110,17 @@ export class InputBarComponent {
 
   /**
    * Gère le clic sur le bouton de sélection des colonnes
-   * Affiche d'abord une popup de confirmation, puis appelle l'API
+   * Si des tables ont déjà été découvertes, ouvre directement le sélecteur
+   * Sinon, affiche la popup de confirmation et appelle l'API
    */
   onColumnSelectorClick(): void {
+    // Si on a déjà des tables découvertes, ouvrir directement le sélecteur
+    if (this.discoveredTables.length > 0) {
+      this.openColumnSelector(this.discoveredTables);
+      return;
+    }
+
+    // Sinon, afficher la popup de confirmation et appeler l'API
     const confirmDialogRef = this.dialog.open(ColumnConfirmDialogComponent, {
       panelClass: 'column-confirm-dialog-panel',
       disableClose: true,

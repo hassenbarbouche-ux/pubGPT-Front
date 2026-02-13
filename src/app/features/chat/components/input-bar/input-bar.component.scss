@@ -179,9 +179,35 @@
   border: 1px solid var(--border-color);
   box-shadow: none;
   transition: border-color 0.2s ease;
+  position: relative;
 
   &:focus-within {
     border-color: #2F2F2F;
+  }
+}
+
+.input-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  // Same padding as question-input inside the wrapper
+  padding-left: calc(16px + 12px); // wrapper padding + input padding
+  font-size: 14px;
+  font-family: inherit;
+  white-space: pre;
+  pointer-events: none;
+  overflow: hidden;
+  color: #424242;
+
+  ::ng-deep strong {
+    font-weight: 700;
+    font-style: italic;
+    text-decoration: underline;
   }
 }
 
@@ -191,9 +217,12 @@
   outline: none;
   background: transparent;
   font-size: 14px;
-  color: #424242;
+  color: transparent;
+  caret-color: #424242;
   padding: 8px 12px;
   font-family: inherit;
+  position: relative;
+  z-index: 1;
 
   &::placeholder {
     color: #bdbdbd;

@@ -4,17 +4,14 @@
       <!-- Message bubble -->
       <app-message-bubble [message]="message"></app-message-bubble>
 
-      <!-- Étapes de streaming (affichées après le message utilisateur) -->
-      <div class="streaming-step-container" *ngIf="message.role === 'user' && isNextMessageStreaming(i)">
-        <div class="streaming-step-indicator">
-          <div class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="step-text">{{ getNextMessageCurrentStep(i) }}</span>
-        </div>
-      </div>
+      <!-- Checklist de streaming (affichée après le message utilisateur) -->
+      <app-streaming-checklist
+        *ngIf="message.role === 'user' && isNextMessageStreaming(i) && getNextMessageChecklistState(i)"
+        [checklistState]="getNextMessageChecklistState(i)!"
+        [isPlannerVisible]="isNextMessagePlannerVisible(i)"
+        [isOrchestratorVisible]="isNextMessageOrchestratorVisible(i)"
+        [orchestratorReasoning]="getNextMessageOrchestratorReasoning(i)"
+      ></app-streaming-checklist>
     </ng-container>
 
     <!-- Message d'accueil si aucun message -->

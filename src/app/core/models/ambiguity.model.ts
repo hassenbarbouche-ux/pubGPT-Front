@@ -39,6 +39,18 @@ export interface ClarificationContext {
    * Valeur: La réponse choisie (ou "Autre: {texte}" pour réponse personnalisée)
    */
   userAnswers: Record<string, string>;
+
+  /**
+   * Flag pour préserver la demande de graphique après une ambiguïté.
+   * Copié depuis la requête initiale.
+   */
+  isChartDemanded?: boolean;
+
+  /**
+   * Flag pour préserver la demande d'explication après une ambiguïté.
+   * Copié depuis la requête initiale.
+   */
+  isExplanationDemanded?: boolean;
 }
 
 /**

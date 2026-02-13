@@ -3,14 +3,17 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
   background-color: #ffffff;
   position: relative;
   margin-left: 0;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 
   // Décalage quand le drawer est ouvert
   &.drawer-open {
     margin-left: 220px;
+    width: calc(100vw - 220px);
   }
 
   app-header-bar {

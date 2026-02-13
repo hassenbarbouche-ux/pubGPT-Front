@@ -1,14 +1,17 @@
 import { Component, Input, Output, EventEmitter, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatMessage } from '../../../../core/models';
+import { ChecklistItemState } from '../../../../core/models/checklist.model';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
+import { StreamingChecklistComponent } from '../streaming-checklist/streaming-checklist.component';
 
 @Component({
   selector: 'app-message-list',
   standalone: true,
   imports: [
     CommonModule,
-    MessageBubbleComponent
+    MessageBubbleComponent,
+    StreamingChecklistComponent
   ],
   templateUrl: './message-list.component.html',
   styleUrl: './message-list.component.scss'
@@ -65,6 +68,54 @@ export class MessageListComponent implements AfterViewChecked {
       return null;
     }
     return nextMessage.streamingSteps[nextMessage.streamingSteps.length - 1] || null;
+  }
+
+  /**
+   * Récupère l'état de la checklist du message assistant suivant (si en streaming)
+   */
+  getNextMessageChecklistState(currentIndex: number): Map<string, ChecklistItemState> | null {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      if (nextMessage.role === 'assistant' && nextMessage.isStreaming && nextMessage.checklistState) {
+        return nextMessage.checklistState;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Vérifie si le Planner est visible pour le message assistant suivant
+   */
+  isNextMessagePlannerVisible(currentIndex: number): boolean {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      return nextMessage.role === 'assistant' && nextMessage.isStreaming === true && nextMessage.isPlannerVisible === true;
+    }
+    return false;
+  }
+
+  /**
+   * Vérifie si l'orchestrateur est visible pour le message assistant suivant
+   */
+  isNextMessageOrchestratorVisible(currentIndex: number): boolean {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      return nextMessage.role === 'assistant' && nextMessage.isStreaming === true && nextMessage.isOrchestratorVisible === true;
+    }
+    return false;
+  }
+
+  /**
+   * Récupère le reasoning de l'orchestrateur du message assistant suivant
+   */
+  getNextMessageOrchestratorReasoning(currentIndex: number): string {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      if (nextMessage.role === 'assistant' && nextMessage.isStreaming) {
+        return nextMessage.orchestratorReasoning || '';
+      }
+    }
+    return '';
   }
 
   onExampleClick(example: string): void {
