@@ -1,15 +1,18 @@
 import { Component, Input, Output, EventEmitter, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ChatMessage } from '../../../../core/models';
 import { ChecklistItemState } from '../../../../core/models/checklist.model';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
 import { StreamingChecklistComponent } from '../streaming-checklist/streaming-checklist.component';
+import { ExamplesDialogComponent } from '../examples-dialog/examples-dialog.component';
 
 @Component({
   selector: 'app-message-list',
   standalone: true,
   imports: [
     CommonModule,
+    MatDialogModule,
     MessageBubbleComponent,
     StreamingChecklistComponent
   ],
@@ -18,17 +21,20 @@ import { StreamingChecklistComponent } from '../streaming-checklist/streaming-ch
 })
 export class MessageListComponent implements AfterViewChecked {
   @Input() messages: ChatMessage[] = [];
+  @Input() isDemoMode: boolean = false;
   @Output() exampleClick = new EventEmitter<string>();
+  @Output() demoQuestionSelect = new EventEmitter<string>();
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   backgroundVideo = '/videos/video.mp4';
-  private shouldScrollToBottom = false; // Désactivé pour éviter le scroll automatique
+  private shouldScrollToBottom = false;
 
   examples = [
     'Donne moi les briefs Peugeot de 2025 avec leurs spots et leurs tarifs',
-    'Combien de campagnes ont été diffusées ce mois-ci?',
-    'Quelles chaînes sont les plus utilisées?'
+    'Combien de campagnes ont été diffusées ce mois-ci?'
   ];
+
+  constructor(private dialog: MatDialog) {}
 
   ngAfterViewChecked(): void {
     if (this.shouldScrollToBottom) {
@@ -118,7 +124,48 @@ export class MessageListComponent implements AfterViewChecked {
     return '';
   }
 
+  getNextMessageThinkingText(currentIndex: number): string {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      if (nextMessage.role === 'assistant' && nextMessage.isStreaming) {
+        return nextMessage.thinkingText || '';
+      }
+    }
+    return '';
+  }
+
+  isNextMessageThinkingActive(currentIndex: number): boolean {
+    if (currentIndex + 1 < this.messages.length) {
+      const nextMessage = this.messages[currentIndex + 1];
+      return nextMessage.role === 'assistant' && nextMessage.isStreaming === true && nextMessage.isThinkingActive === true;
+    }
+    return false;
+  }
+
   onExampleClick(example: string): void {
-    this.exampleClick.emit(example);
+    if (this.isDemoMode) {
+      this.demoQuestionSelect.emit(example);
+    } else {
+      this.exampleClick.emit(example);
+    }
+  }
+
+  openExamplesDialog(): void {
+    const dialogRef = this.dialog.open(ExamplesDialogComponent, {
+      width: '1100px',
+      maxWidth: '95vw',
+      panelClass: 'examples-dialog-panel',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe((selectedQuestion: string | null) => {
+      if (selectedQuestion) {
+        if (this.isDemoMode) {
+          this.demoQuestionSelect.emit(selectedQuestion);
+        } else {
+          this.exampleClick.emit(selectedQuestion);
+        }
+      }
+    });
   }
 }

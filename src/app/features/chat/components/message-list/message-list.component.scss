@@ -195,7 +195,49 @@
           content: none;
         }
       }
+
+      // "Voir plus" wrapper — no border, no padding
+      li.demo-more-wrapper {
+        border: none;
+        padding: 0;
+        background: none;
+        position: relative;
+        cursor: default;
+
+        &:hover {
+          border-color: transparent;
+          background-color: transparent;
+          color: inherit;
+          transform: none;
+          box-shadow: none;
+        }
+      }
     }
+
+    .demo-more-btn {
+      font-family: 'Cormorant SC', serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: #2C2C2C;
+      letter-spacing: 0.8px;
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #D0D0D0;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #000000;
+        background-color: #000000;
+        color: #FFFFFF;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+
   }
 
   // Responsive pour écrans moyens (tablettes)

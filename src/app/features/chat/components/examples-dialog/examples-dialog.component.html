@@ -1,0 +1,59 @@
+<div class="examples-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>list_alt</mat-icon>
+    Exemples de questions
+  </h2>
+
+  <p class="dialog-description">
+    S&eacute;lectionnez une question pour la tester dans pubGPT. Chaque question est class&eacute;e par intention, complexit&eacute; et domaine m&eacute;tier.
+  </p>
+
+  <mat-dialog-content>
+    <div class="table-wrapper">
+      <table class="examples-table">
+        <thead>
+          <tr>
+            <th class="col-question">Question</th>
+            <th class="col-intention">Intention</th>
+            <th class="col-complexite">Complexit&eacute;</th>
+            <th class="col-cross">Cross M&eacute;tier</th>
+            <th class="col-domaine">Domaine(s) M&eacute;tier</th>
+            <th class="col-charts">Charts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let q of questions"
+            [class.selected]="selectedQuestion === q"
+            (click)="onSelect(q)"
+          >
+            <td class="col-question">{{ q.question }}</td>
+            <td class="col-intention">
+              <span class="badge">{{ q.intention }}</span>
+            </td>
+            <td class="col-complexite">
+              <span class="badge">{{ q.complexite }}</span>
+            </td>
+            <td class="col-cross center">
+              <mat-icon *ngIf="q.crossMetier" class="check-icon">check</mat-icon>
+            </td>
+            <td class="col-domaine">
+              <span *ngFor="let d of q.domaines" class="domain-chip">{{ d }}</span>
+              <span *ngIf="q.domaines.length === 0" class="no-domain">&mdash;</span>
+            </td>
+            <td class="col-charts center">
+              <mat-icon *ngIf="q.charts" class="check-icon">check</mat-icon>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Annuler</button>
+    <button mat-raised-button color="primary" [disabled]="!selectedQuestion" (click)="onConfirm()">
+      OK
+    </button>
+  </mat-dialog-actions>
+</div>

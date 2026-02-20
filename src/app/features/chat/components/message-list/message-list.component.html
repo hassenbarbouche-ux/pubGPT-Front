@@ -11,6 +11,8 @@
         [isPlannerVisible]="isNextMessagePlannerVisible(i)"
         [isOrchestratorVisible]="isNextMessageOrchestratorVisible(i)"
         [orchestratorReasoning]="getNextMessageOrchestratorReasoning(i)"
+        [thinkingText]="getNextMessageThinkingText(i)"
+        [isThinkingActive]="isNextMessageThinkingActive(i)"
       ></app-streaming-checklist>
     </ng-container>
 
@@ -32,6 +34,11 @@
           <ul class="examples-list">
             <li *ngFor="let example of examples" (click)="onExampleClick(example)">
               {{ example }}
+            </li>
+            <li class="demo-more-wrapper">
+              <button class="demo-more-btn" (click)="openExamplesDialog()">
+                + Voir plus d'exemples
+              </button>
             </li>
           </ul>
         </div>

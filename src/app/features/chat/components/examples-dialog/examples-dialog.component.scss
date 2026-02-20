@@ -1,0 +1,207 @@
+.examples-dialog {
+  background-color: #000000;
+  color: #ffffff;
+
+  h2[mat-dialog-title] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px 24px 16px;
+    font-size: 20px;
+    font-weight: 500;
+    background-color: #000000;
+
+    mat-icon {
+      color: #ffffff;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .dialog-description {
+    color: #999999;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0 24px 16px;
+  }
+
+  mat-dialog-content {
+    padding: 0 24px 20px;
+    background-color: #000000;
+    color: #ffffff;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  mat-dialog-actions {
+    padding: 16px 24px 20px;
+    gap: 12px;
+    background-color: #000000;
+  }
+}
+
+// Table
+.table-wrapper {
+  overflow-x: hidden;
+}
+
+.examples-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    tr {
+      background-color: #111111;
+    }
+
+    th {
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #999999;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #333333;
+      white-space: nowrap;
+
+      &.center {
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      border-bottom: 1px solid #1a1a1a;
+
+      &:hover {
+        background-color: #111111;
+      }
+
+      &.selected {
+        background-color: #1a1a1a;
+        outline: 1px solid #ffffff;
+        outline-offset: -1px;
+
+        td {
+          color: #ffffff;
+        }
+      }
+    }
+
+    td {
+      padding: 10px 12px;
+      color: #cccccc;
+      vertical-align: middle;
+
+      &.center {
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Column widths
+.col-question {
+  width: 30%;
+}
+
+.col-cross, .col-charts {
+  width: 65px;
+}
+
+// Badges
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: #222222;
+  color: #cccccc;
+  border: 1px solid #333333;
+}
+
+// Domain chips
+.domain-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 1px 3px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: #222222;
+  color: #cccccc;
+  border: 1px solid #333333;
+  white-space: nowrap;
+}
+
+.no-domain {
+  color: #555555;
+}
+
+// Check icon
+.check-icon {
+  color: #4ade80;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+// Material overrides for dark theme
+::ng-deep {
+  .examples-dialog-panel {
+    .mat-mdc-dialog-container,
+    .mdc-dialog__surface {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border-radius: 12px !important;
+    }
+  }
+
+  .examples-dialog {
+    .mat-mdc-button {
+      color: #ffffff !important;
+    }
+
+    .mat-mdc-raised-button.mat-primary {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+
+      &:disabled {
+        background-color: #333333 !important;
+        color: #666666 !important;
+      }
+    }
+  }
+}
+
+// Scrollbar styling
+mat-dialog-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+mat-dialog-content::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
