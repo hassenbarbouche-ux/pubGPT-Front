@@ -4,6 +4,11 @@ export interface User {
   isActive: boolean;
   dateCreation: Date;
   dateModification: Date;
+  isDemo?: boolean;
+  tokenQuota?: number;
+  tokensUsed?: number;
+  tokensRemaining?: number;
+  demoQuota?: DemoQuota;
 }
 
 export interface LoginRequest {
@@ -16,4 +21,23 @@ export interface LoginResponse {
   message: string;
   user?: User;
   token?: string; // Pour une future implémentation JWT si nécessaire
+}
+
+export interface DemoLoginRequest {
+  email: string;
+  code: string;
+}
+
+export interface DemoLoginResponse {
+  valid: boolean;
+  name: string;
+  email: string;
+  remaining_queries: number;
+  days_left: number;
+  error?: string;
+}
+
+export interface DemoQuota {
+  remainingQueries: number;
+  daysLeft: number;
 }

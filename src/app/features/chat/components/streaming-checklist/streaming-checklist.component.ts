@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CHECKLIST_ITEMS, ChecklistItem, ChecklistItemState, ChecklistSubItem, PLANNER_SUB_ITEMS, isPlannerActive } from '../../../../core/models/checklist.model';
 
@@ -97,18 +97,43 @@ import { CHECKLIST_ITEMS, ChecklistItem, ChecklistItemState, ChecklistSubItem, P
 
         </ng-container>
       </ng-container>
+
+      <!-- Thinking panel (floating right, same pattern as orchestrator reasoning) -->
+      <div class="thinking-anchor" *ngIf="thinkingText">
+        <div class="thinking-floating">
+          <div class="thinking-connector"></div>
+          <div class="thinking-content">
+            <div class="thinking-header">
+              <span class="thinking-label">Raisonnement</span>
+              <span class="thinking-dot" *ngIf="isThinkingActive"></span>
+            </div>
+            <div class="thinking-text" #thinkingScroll [class.shimmer]="isThinkingActive">{{ thinkingText }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styleUrls: ['./streaming-checklist.component.scss']
 })
-export class StreamingChecklistComponent {
+export class StreamingChecklistComponent implements AfterViewChecked {
   @Input() checklistState!: Map<string, ChecklistItemState>;
   @Input() isPlannerVisible: boolean = false;
   @Input() isOrchestratorVisible: boolean = false;
   @Input() orchestratorReasoning: string = '';
+  @Input() thinkingText: string = '';
+  @Input() isThinkingActive: boolean = false;
+
+  @ViewChild('thinkingScroll') thinkingScrollRef?: ElementRef;
 
   checklistItems = CHECKLIST_ITEMS;
   plannerSubItems = PLANNER_SUB_ITEMS;
+
+  ngAfterViewChecked(): void {
+    if (this.isThinkingActive && this.thinkingScrollRef) {
+      const el = this.thinkingScrollRef.nativeElement;
+      el.scrollTop = el.scrollHeight;
+    }
+  }
 
   getItemState(itemId: string): ChecklistItemState {
     return this.checklistState?.get(itemId) || 'pending';

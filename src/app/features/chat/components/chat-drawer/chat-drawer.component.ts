@@ -34,6 +34,11 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
   private projectSubmenuTimeout: any = null;
   private destroy$ = new Subject<void>();
 
+  // Demo user token tracking
+  isDemoUser: boolean = false;
+  demoTokensUsed: number = 0;
+  demoTokenQuota: number = 0;
+
   // Liste hardcodée des projets disponibles
   availableProjects = [
     { id: '1', name: 'Campagne Peugeot 2024' },
@@ -51,9 +56,28 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Load initial token stats and conversations
-    this.refreshTokenStats();
+    this.isDemoUser = this.authService.isDemoUser();
+
+    if (this.isDemoUser) {
+      // Demo users: track lifetime quota from auth service
+      this.updateDemoTokenInfo();
+      this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.updateDemoTokenInfo();
+      });
+    } else {
+      // Normal users: track daily quota from token service
+      this.refreshTokenStats();
+    }
+
     this.loadConversations();
+  }
+
+  private updateDemoTokenInfo(): void {
+    const quota = this.authService.getTokenQuota();
+    if (quota) {
+      this.demoTokensUsed = quota.tokensUsed;
+      this.demoTokenQuota = quota.tokenQuota;
+    }
   }
 
   /**
@@ -94,6 +118,13 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
    * Call this method after each chat response to update the display
    */
   refreshTokenStats(): void {
+    if (this.isDemoUser) {
+      // Demo users: refresh from auth service (lifetime quota)
+      this.authService.refreshQuota();
+      return;
+    }
+
+    // Normal users: refresh from token service (daily quota)
     const currentUser = this.authService.currentUserValue;
     if (currentUser && currentUser.id) {
       this.tokenService.getUserTokenStats(currentUser.id)
@@ -118,6 +149,13 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
    * Get the color class for the token bar based on usage percentage
    */
   getTokenBarColorClass(): string {
+    if (this.isDemoUser) {
+      const pct = this.demoTokenQuota > 0 ? (this.demoTokensUsed / this.demoTokenQuota) * 100 : 0;
+      if (pct >= 90) return 'token-bar-critical';
+      if (pct >= 75) return 'token-bar-warning';
+      return 'token-bar-normal';
+    }
+
     if (!this.tokenStats) return 'token-bar-normal';
 
     const percentage = this.tokenStats.usagePercentage;
@@ -130,6 +168,13 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
    * Get formatted token message
    */
   getTokenMessage(): string {
+    if (this.isDemoUser) {
+      if (this.demoTokenQuota > 0 && this.demoTokensUsed >= this.demoTokenQuota) {
+        return 'Quota demo épuisé';
+      }
+      return `${this.formatNumber(this.demoTokensUsed)} / ${this.formatNumber(this.demoTokenQuota)} tokens`;
+    }
+
     if (!this.tokenStats) {
       return 'Chargement...';
     }
@@ -154,6 +199,21 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
   getUserLogin(): string {
     const currentUser = this.authService.currentUserValue;
     return currentUser?.login || 'Utilisateur inconnu';
+  }
+
+  /**
+   * Get user initials from login/email
+   * mariem.benkhelifa@gmail.com → MB
+   * john@gmail.com → JO
+   */
+  getUserInitials(): string {
+    const login = this.getUserLogin();
+    const localPart = login.split('@')[0];
+    const parts = localPart.split(/[._-]/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return localPart.substring(0, 2).toUpperCase();
   }
 
   toggleDrawer(): void {

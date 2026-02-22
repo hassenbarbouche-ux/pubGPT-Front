@@ -9,9 +9,10 @@
   align-items: center;
   justify-content: flex-end;
   padding-right: 8%;
+  background: #0a0a0b;
 }
 
-// Vidéo en fond plein écran
+// Vidéo en fond plein écran (inversée)
 .login-left {
   position: absolute;
   top: 0;
@@ -24,6 +25,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: invert(1) hue-rotate(180deg);
   }
 }
 
@@ -44,17 +46,65 @@
   font-size: 4rem;
   font-weight: 400;
   letter-spacing: 0.3em;
-  color: #2C2C2C;
+  color: #ffffff;
   margin: 0 0 0.5rem 0;
   text-align: center;
 }
 
 .login-subtitle {
   font-size: 0.9rem;
-  color: #666;
+  color: #a1a1aa;
   margin: 0 0 3rem 0;
   text-align: center;
   font-weight: 300;
+}
+
+// Toggle Connexion / Demo
+.mode-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 3px;
+  margin-bottom: 2rem;
+  gap: 3px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.55rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: #71717a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.active {
+    background: #ffffff;
+    color: #0a0a0b;
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.code-input {
+  font-family: 'Courier New', monospace !important;
+  font-size: 1.1rem !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.demo-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #71717a;
+  margin-top: 1rem;
+  line-height: 1.4;
 }
 
 .login-form {
@@ -72,7 +122,7 @@
   label {
     font-size: 0.85rem;
     font-weight: 400;
-    color: #333;
+    color: #a1a1aa;
     margin-bottom: 0.5rem;
   }
 
@@ -80,38 +130,38 @@
     width: 100%;
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
-    border: 1px solid #ddd;
+    border: 1px solid #27272a;
     border-radius: 4px;
-    background: white;
-    color: #333;
+    background: #18181b;
+    color: #ffffff;
     transition: all 0.2s ease;
     box-sizing: border-box;
 
     &::placeholder {
-      color: #999;
+      color: #52525b;
       font-style: italic;
     }
 
     &:focus {
       outline: none;
-      border-color: #333;
-      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+      border-color: #52525b;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background: #f9f9f9;
+      background: #111113;
     }
   }
 }
 
 .error-message {
   padding: 0.75rem 1rem;
-  background: #fff3f3;
-  border: 1px solid #ffcdd2;
+  background: #1c0d0d;
+  border: 1px solid #7f1d1d;
   border-radius: 4px;
-  color: #c62828;
+  color: #fca5a5;
   font-size: 0.85rem;
   text-align: left;
 }
@@ -121,8 +171,8 @@
   padding: 0.9rem;
   font-size: 0.95rem;
   font-weight: 500;
-  color: white;
-  background: #333;
+  color: #0a0a0b;
+  background: #ffffff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -131,7 +181,7 @@
   letter-spacing: 0.05em;
 
   &:hover:not(:disabled) {
-    background: #000;
+    background: #e4e4e7;
   }
 
   &:active:not(:disabled) {
@@ -148,13 +198,13 @@
   display: block;
   text-align: center;
   font-size: 0.85rem;
-  color: #666;
+  color: #71717a;
   text-decoration: underline;
   margin-top: 1rem;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #333;
+    color: #a1a1aa;
   }
 }
 

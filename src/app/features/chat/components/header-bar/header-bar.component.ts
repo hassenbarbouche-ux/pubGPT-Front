@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -22,7 +23,7 @@ import { AuthService } from '../../../../core/services/auth.service';
   templateUrl: './header-bar.component.html',
   styleUrl: './header-bar.component.scss'
 })
-export class HeaderBarComponent implements OnChanges {
+export class HeaderBarComponent implements OnChanges, OnInit {
   @Input() confidenceScore: number | null = null;
   @Input() confidenceLevel: string | null = null;
   @Input() executionTime: number | null = null;
@@ -43,10 +44,46 @@ export class HeaderBarComponent implements OnChanges {
   showSqlTooltip: boolean = false;
   private previousAccuracy: number | null = null;
 
+  isDemoUser: boolean = false;
+  tokensUsed: number = 0;
+  tokenQuota: number = 0;
+  isDarkTheme: boolean = false;
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {}
+
+  ngOnInit(): void {
+    this.isDemoUser = this.authService.isDemoUser();
+    this.updateTokenInfo();
+
+    this.authService.currentUser$.subscribe(() => {
+      this.updateTokenInfo();
+    });
+
+    this.themeService.theme$.subscribe(theme => {
+      this.isDarkTheme = theme === 'dark';
+    });
+  }
+
+  onToggleTheme(): void {
+    this.themeService.toggle();
+  }
+
+  private updateTokenInfo(): void {
+    const quota = this.authService.getTokenQuota();
+    if (quota) {
+      this.tokensUsed = quota.tokensUsed;
+      this.tokenQuota = quota.tokenQuota;
+    }
+  }
+
+  formatTokens(n: number): string {
+    if (n >= 1000) return Math.round(n / 1000) + 'k';
+    return String(n);
+  }
 
   getConfidenceColor(): string {
     if (!this.confidenceScore) return 'accent';

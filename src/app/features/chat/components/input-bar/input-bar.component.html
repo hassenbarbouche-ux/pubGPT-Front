@@ -42,7 +42,9 @@
   </div>
 
   <div class="input-bar-container">
-    <div class="input-wrapper">
+    <div class="input-wrapper"
+      [matTooltip]="isDemoMode ? 'En mode invité, veuillez choisir une question parmi les exemples proposés' : ''"
+      matTooltipPosition="above">
       <div
         class="input-highlight"
         [innerHTML]="highlightedHtml"
@@ -51,12 +53,14 @@
       <input
         type="text"
         class="question-input"
+        [class.demo-readonly]="isDemoMode"
         [(ngModel)]="question"
         (input)="onInputChange()"
         (paste)="onPaste($event)"
         (keypress)="onKeyPress($event)"
         [disabled]="isInputDisabled"
-        placeholder="Posez votre question"
+        [readonly]="isDemoMode"
+        [placeholder]="isDemoMode ? 'Choisissez une question ci-dessus' : 'Posez votre question'"
       />
       <button
         mat-icon-button

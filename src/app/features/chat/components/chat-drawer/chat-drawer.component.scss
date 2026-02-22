@@ -1,17 +1,17 @@
-// Drawer principal - Style ChatGPT
+// Drawer principal
 .drawer {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 220px; // Largeur réduite
-  background-color: #F7F7F8; // Gris clair comme ChatGPT
+  width: 220px;
+  background-color: var(--drawer-bg);
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 100; // Plus bas pour ne pas bloquer l'application
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #E5E5E5;
+  border-right: 1px solid var(--border-color);
   overflow: visible;
 
   &.open {
@@ -25,16 +25,16 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 4px;
-  background-color: #F7F7F8;
+  background-color: var(--drawer-bg);
 
   .menu-button,
   .new-chat-button {
-    color: #202123;
+    color: var(--text-drawer);
     width: 40px;
     height: 40px;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: var(--bg-hover-strong);
     }
 
     mat-icon {
@@ -45,7 +45,7 @@
   }
 }
 
-// Bouton Nouveau Chat (au-dessus de la recherche, style ChatGPT)
+// Bouton Nouveau Chat
 .new-chat-container {
   padding: 8px;
 
@@ -57,20 +57,20 @@
     margin-bottom: 0;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #202123;
+    color: var(--text-drawer);
     font-size: 13px;
     font-weight: 400;
     border-radius: 6px;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: var(--bg-hover-strong);
     }
 
     .chat-icon {
       font-size: 16px;
       width: 16px;
       height: 16px;
-      color: #202123;
+      color: var(--text-drawer);
     }
 
     .expand-icon {
@@ -78,7 +78,7 @@
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #202123;
+      color: var(--text-drawer);
       transition: transform 0.2s ease;
     }
   }
@@ -97,21 +97,21 @@
       padding: 8px 12px;
       cursor: pointer;
       transition: all 0.2s ease;
-      color: #202123;
+      color: var(--text-drawer);
       font-size: 12px;
       font-weight: 400;
       border-radius: 6px;
       margin-bottom: 2px;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: var(--bg-hover-strong);
       }
 
       .project-sub-icon {
         font-size: 14px;
         width: 14px;
         height: 14px;
-        color: #8E8EA0;
+        color: var(--text-drawer-muted);
       }
     }
   }
@@ -136,17 +136,17 @@
     position: relative;
     display: flex;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-hover);
     border-radius: 6px;
     padding: 6px 10px;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.08);
+      background-color: var(--bg-hover-strong);
     }
 
     .search-icon {
-      color: #8E8EA0;
+      color: var(--text-drawer-muted);
       font-size: 18px;
       width: 18px;
       height: 18px;
@@ -159,10 +159,10 @@
       outline: none;
       background: transparent;
       font-size: 13px;
-      color: #202123;
+      color: var(--text-drawer);
 
       &::placeholder {
-        color: #8E8EA0;
+        color: var(--text-drawer-muted);
       }
     }
   }
@@ -179,7 +179,7 @@
     padding: 8px 12px;
     font-size: 11px;
     font-weight: 600;
-    color: #8E8EA0;
+    color: var(--text-drawer-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -196,7 +196,7 @@
       gap: 4px;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+        background-color: var(--bg-hover);
 
         .chat-menu-button {
           opacity: 1;
@@ -204,18 +204,18 @@
       }
 
       &.active {
-        background-color: #000000;
-        color: #FFFFFF;
+        background-color: var(--drawer-active-bg);
+        color: var(--drawer-active-text);
 
         .chat-item {
-          color: #FFFFFF;
+          color: var(--drawer-active-text);
 
           .chat-timestamp {
-            color: #CCCCCC;
+            color: var(--text-muted);
           }
 
           .chat-title {
-            color: #FFFFFF;
+            color: var(--drawer-active-text);
           }
         }
 
@@ -223,12 +223,12 @@
           opacity: 1;
 
           mat-icon {
-            color: #FFFFFF;
+            color: var(--drawer-active-text);
           }
         }
 
         &:hover {
-          background-color: #1a1a1a;
+          background-color: var(--drawer-active-hover);
         }
       }
 
@@ -237,7 +237,7 @@
         padding: 10px 12px;
         cursor: pointer;
         transition: all 0.2s ease;
-        color: #202123;
+        color: var(--text-drawer);
         display: flex;
         flex-direction: column;
         gap: 2px;
@@ -245,7 +245,7 @@
 
         .chat-timestamp {
           font-size: 10px;
-          color: #8E8EA0;
+          color: var(--text-drawer-muted);
           font-weight: 400;
         }
 
@@ -263,7 +263,7 @@
         height: 32px;
         opacity: 0;
         transition: opacity 0.2s ease;
-        color: #202123;
+        color: var(--text-drawer);
 
         mat-icon {
           font-size: 18px;
@@ -272,7 +272,7 @@
         }
 
         &:hover {
-          background-color: rgba(0, 0, 0, 0.1);
+          background-color: var(--bg-hover-strong);
         }
       }
 
@@ -281,9 +281,9 @@
         right: 0;
         top: 100%;
         margin-top: 4px;
-        background-color: #FFFFFF;
+        background-color: var(--drawer-menu-bg);
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px var(--shadow-md);
         overflow: visible;
         z-index: 1000;
         min-width: 200px;
@@ -297,7 +297,7 @@
           padding: 12px 16px;
           border: none;
           background-color: transparent;
-          color: #202123;
+          color: var(--text-drawer);
           font-size: 14px;
           font-weight: 400;
           text-align: left;
@@ -315,11 +315,11 @@
           }
 
           &:hover {
-            background-color: #F7F7F8;
+            background-color: var(--drawer-menu-hover);
           }
 
           &:not(:last-child) {
-            border-bottom: 1px solid #E5E5E5;
+            border-bottom: 1px solid var(--border-color);
           }
 
           &.delete {
@@ -338,7 +338,7 @@
             font-size: 20px;
             width: 20px;
             height: 20px;
-            color: #202123;
+            color: var(--text-drawer);
           }
 
           .arrow-icon {
@@ -351,9 +351,9 @@
           .projects-submenu {
             position: fixed;
             left: 220px;
-            background-color: #FFFFFF;
+            background-color: var(--drawer-menu-bg);
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px var(--shadow-md);
             overflow: hidden;
             z-index: 1001;
             min-width: 220px;
@@ -367,7 +367,7 @@
               padding: 12px 16px;
               border: none;
               background-color: transparent;
-              color: #202123;
+              color: var(--text-drawer);
               font-size: 14px;
               font-weight: 400;
               text-align: left;
@@ -375,18 +375,18 @@
               transition: background-color 0.2s;
 
               &:hover {
-                background-color: #F7F7F8;
+                background-color: var(--drawer-menu-hover);
               }
 
               &:not(:last-child) {
-                border-bottom: 1px solid #E5E5E5;
+                border-bottom: 1px solid var(--border-color);
               }
 
               mat-icon {
                 font-size: 20px;
                 width: 20px;
                 height: 20px;
-                color: #202123;
+                color: var(--text-drawer);
               }
             }
           }
@@ -397,7 +397,7 @@
     .no-chats {
       padding: 24px 12px;
       text-align: center;
-      color: #8E8EA0;
+      color: var(--text-drawer-muted);
       font-size: 13px;
     }
   }
@@ -406,15 +406,15 @@
 // Footer du drawer
 .drawer-footer {
   padding: 12px;
-  border-top: 1px solid #E5E5E5;
-  background-color: #F7F7F8;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--drawer-bg);
 
   .token-usage-section {
     margin-bottom: 12px;
     padding: 8px 8px 12px 8px;
 
     .token-message {
-      color: #424242;
+      color: var(--text-secondary);
       font-size: 0.75rem;
       font-weight: 400;
       margin-bottom: 6px;
@@ -428,7 +428,7 @@
 
     .token-bar-container {
       height: 6px;
-      background-color: #E5E5E5;
+      background-color: var(--checklist-bar-track);
       width: 100%;
       border-radius: 3px;
       overflow: hidden;
@@ -439,17 +439,16 @@
         transition: width 0.3s ease, background-color 0.3s ease;
       }
 
-      // Token bar color states
       .token-bar-normal {
-        background-color: #2F2F2F; // Black/dark gray for normal usage (< 75%)
+        background-color: var(--token-bar-normal);
       }
 
       .token-bar-warning {
-        background-color: #FF9800; // Orange for warning usage (75-90%)
+        background-color: #FF9800;
       }
 
       .token-bar-critical {
-        background-color: #D32F2F; // Red for critical usage (90%+)
+        background-color: #D32F2F;
       }
     }
   }
@@ -465,7 +464,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: var(--bg-hover);
     }
 
     .user-avatar {
@@ -473,24 +472,25 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #000000;
+      background-color: var(--avatar-bg);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
 
       mat-icon {
-        color: #FFFFFF;
+        color: var(--avatar-text);
         font-size: 24px;
         width: 24px;
         height: 24px;
       }
 
-      .avatar-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
+      .avatar-initials {
+        color: var(--avatar-text);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        user-select: none;
       }
     }
 
@@ -502,8 +502,8 @@
       min-width: 0;
 
       .user-access-badge {
-        background-color: #000000;
-        color: white;
+        background-color: var(--accent-bg);
+        color: var(--accent-text);
         padding: 2px 8px;
         border-radius: 8px;
         font-size: 0.6rem;
@@ -515,7 +515,7 @@
 
       .user-email {
         font-size: 13px;
-        color: #202123;
+        color: var(--text-drawer);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -529,9 +529,9 @@
       left: 0;
       right: 0;
       margin-bottom: 8px;
-      background-color: #FFFFFF;
+      background-color: var(--drawer-menu-bg);
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px var(--shadow-md);
       overflow: hidden;
       z-index: 1000;
 
@@ -543,7 +543,7 @@
         padding: 12px 16px;
         border: none;
         background-color: transparent;
-        color: #202123;
+        color: var(--text-drawer);
         font-size: 14px;
         font-weight: 400;
         text-align: left;
@@ -551,25 +551,25 @@
         transition: background-color 0.2s;
 
         &:hover {
-          background-color: #F7F7F8;
+          background-color: var(--drawer-menu-hover);
         }
 
         &:not(:last-child) {
-          border-bottom: 1px solid #E5E5E5;
+          border-bottom: 1px solid var(--border-color);
         }
 
         mat-icon {
           font-size: 20px;
           width: 20px;
           height: 20px;
-          color: #202123;
+          color: var(--text-drawer);
         }
       }
     }
   }
 }
 
-// Scrollbar personnalisée
+// Scrollbar personnalisee
 .chats-section {
   &::-webkit-scrollbar {
     width: 6px;
@@ -580,11 +580,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #CCCCCC;
+    background: var(--scrollbar-thumb);
     border-radius: 3px;
 
     &:hover {
-      background: #999999;
+      background: var(--scrollbar-thumb-hover);
     }
   }
 }

@@ -44,6 +44,14 @@ export interface QuestionSubmit {
 export class InputBarComponent {
   @Input() disabled: boolean = false;
   @Input() maxMessagesReached: boolean = false;
+  @Input() isDemoMode: boolean = false;
+  @Input() set prefillQuestion(q: string) {
+    if (q) {
+      this.question = q;
+      this.selectedDemoQuestion = q;
+      this.onInputChange();
+    }
+  }
   @Input() userId?: number;
   @Input() sessionId?: string;
   @Output() sendMessage = new EventEmitter<QuestionSubmit>();
@@ -53,6 +61,7 @@ export class InputBarComponent {
   isExplanationDemanded: boolean = false;
   selectedColumns: string[] = [];
   highlightedHtml: SafeHtml = '';
+  selectedDemoQuestion: string = '';
 
   /** Tables découvertes par l'API (pour réutilisation) */
   private discoveredTables: TableWithColumns[] = [];
@@ -95,6 +104,7 @@ export class InputBarComponent {
       });
       this.question = '';
       this.highlightedHtml = '';
+      this.selectedDemoQuestion = '';
       // Réinitialiser les colonnes sélectionnées pour la nouvelle question
       this.selectedColumns = [];
       this.discoveredTables = [];

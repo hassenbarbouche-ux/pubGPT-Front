@@ -19,6 +19,8 @@ export interface ChatMessage {
   isPlannerVisible?: boolean;  // Flag pour afficher les sous-étapes du Planner
   isOrchestratorVisible?: boolean;  // Flag pour afficher le panneau orchestrateur
   orchestratorReasoning?: string;   // Dernier reasoning de l'orchestrateur
+  thinkingText?: string;            // Texte du raisonnement LLM streamé en temps réel
+  isThinkingActive?: boolean;       // True pendant le streaming des thinking tokens
   selectedColumns?: string[];       // Colonnes choisies par l'utilisateur (format TABLE.COL)
 }
 

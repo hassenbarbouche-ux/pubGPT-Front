@@ -26,13 +26,23 @@
   <!-- Liste des messages -->
   <app-message-list
     [messages]="messages"
-    (exampleClick)="onSendMessage($event)">
+    [isDemoMode]="isDemoUser"
+    (exampleClick)="onSendMessage($event)"
+    (demoQuestionSelect)="onDemoQuestionSelect($event)">
   </app-message-list>
 
   <!-- Barre d'input -->
   <app-input-bar
     [disabled]="isProcessing"
     [maxMessagesReached]="isMaxMessagesReached"
+    [isDemoMode]="isDemoUser"
+    [prefillQuestion]="demoSelectedQuestion"
     (sendMessage)="onSendMessage($event)">
   </app-input-bar>
 </div>
+
+<!-- Onboarding tour for demo users -->
+<app-onboarding-tour
+  #onboardingTour
+  (tourCompleted)="onTourCompleted()">
+</app-onboarding-tour>

@@ -69,6 +69,8 @@ export class ChatService {
         'orchestrator', 'orchestrator_thinking',
         'orchestrator_plan', 'orchestrator_reasoning',
         'orchestrator_task', 'orchestrator_synthesis',
+        // Thinking stream events
+        'thinking_stream',
         'result', 'error'
       ];
 
@@ -191,6 +193,8 @@ export class ChatService {
         'orchestrator', 'orchestrator_thinking',
         'orchestrator_plan', 'orchestrator_reasoning',
         'orchestrator_task', 'orchestrator_synthesis',
+        // Thinking stream events
+        'thinking_stream',
         'result', 'error'
       ];
 

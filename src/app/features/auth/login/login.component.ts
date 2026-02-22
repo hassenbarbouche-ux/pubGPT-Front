@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { LoginRequest } from '../../../core/models';
+import { LoginRequest, DemoLoginRequest } from '../../../core/models';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +15,15 @@ import { LoginRequest } from '../../../core/models';
 export class LoginComponent {
   backgroundVideo = '/videos/video.mp4';
 
+  // Standard login
   login = '';
   password = '';
+
+  // Demo login
+  demoEmail = '';
+  demoCode = '';
+  isDemoMode = false;
+
   errorMessage = '';
   isLoading = false;
 
@@ -24,6 +31,11 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router
   ) {}
+
+  switchMode(demo: boolean): void {
+    this.isDemoMode = demo;
+    this.errorMessage = '';
+  }
 
   onSubmit(): void {
     if (!this.login.trim() || !this.password.trim()) {
@@ -42,16 +54,48 @@ export class LoginComponent {
     this.authService.login(loginRequest).subscribe({
       next: (response) => {
         if (response.success) {
-          // Rediriger vers la page de chat
           this.router.navigate(['/chat']);
         } else {
           this.errorMessage = response.message || 'Identifiants incorrects';
           this.isLoading = false;
         }
       },
-      error: (error) => {
-        console.error('Erreur de connexion:', error);
+      error: () => {
         this.errorMessage = 'Une erreur est survenue lors de la connexion';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onDemoSubmit(): void {
+    if (!this.demoEmail.trim() || !this.demoCode.trim()) {
+      this.errorMessage = 'Veuillez remplir tous les champs';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.isLoading = true;
+
+    const request: DemoLoginRequest = {
+      email: this.demoEmail.trim().toLowerCase(),
+      code: this.demoCode.trim().toUpperCase()
+    };
+
+    this.authService.demoLogin(request).subscribe({
+      next: (response) => {
+        if (response.valid) {
+          this.router.navigate(['/chat']);
+        } else {
+          this.errorMessage = response.error || 'Code invalide';
+          this.isLoading = false;
+        }
+      },
+      error: (err) => {
+        if (err.error?.error) {
+          this.errorMessage = err.error.error;
+        } else {
+          this.errorMessage = 'Erreur réseau. Veuillez réessayer.';
+        }
         this.isLoading = false;
       }
     });

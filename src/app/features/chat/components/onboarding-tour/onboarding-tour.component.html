@@ -1,0 +1,26 @@
+<div class="tour-overlay" *ngIf="isActive">
+  <!-- Highlight cutout -->
+  <div class="tour-highlight" [ngStyle]="highlightStyle"></div>
+
+  <!-- Click catcher (skip on overlay click) -->
+  <div class="tour-click-catcher" (click)="skip()"></div>
+
+  <!-- Popup -->
+  <div class="tour-popup" [ngStyle]="popupStyle" [attr.data-step]="currentStep">
+    <div class="tour-popup-header">
+      <span class="tour-step-count">{{ currentStep + 1 }}/{{ steps.length }}</span>
+      <button class="tour-skip" (click)="skip()">Passer &times;</button>
+    </div>
+
+    <div class="tour-animation" [innerHTML]="animationHtml" [attr.data-key]="animationKey"></div>
+
+    <h3 class="tour-title">{{ currentStepData.title }}</h3>
+    <p class="tour-desc">{{ currentStepData.description }}</p>
+
+    <div class="tour-actions">
+      <button class="tour-btn-next" (click)="next()">
+        {{ isLastStep ? 'Commencer' : 'Suivant' }}
+      </button>
+    </div>
+  </div>
+</div>

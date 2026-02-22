@@ -42,19 +42,19 @@
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    background-color: #000000;
-    border: 1px solid #000000;
+    background-color: var(--accent-bg);
+    border: 1px solid var(--accent-bg);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: #2F2F2F;
+      background-color: var(--accent-bg-hover);
     }
 
     mat-checkbox {
       font-size: 10px;
-      color: white;
+      color: var(--accent-text);
       font-weight: 400;
 
       ::ng-deep .mat-mdc-checkbox {
@@ -62,14 +62,14 @@
       }
 
       ::ng-deep .mdc-checkbox {
-        --mdc-checkbox-selected-checkmark-color: #000000;
-        --mdc-checkbox-selected-focus-icon-color: white;
-        --mdc-checkbox-selected-hover-icon-color: white;
-        --mdc-checkbox-selected-icon-color: white;
-        --mdc-checkbox-selected-pressed-icon-color: white;
-        --mdc-checkbox-unselected-icon-color: white;
-        --mdc-checkbox-unselected-hover-icon-color: #CCCCCC;
-        --mdc-checkbox-unselected-focus-icon-color: #CCCCCC;
+        --mdc-checkbox-selected-checkmark-color: var(--accent-bg);
+        --mdc-checkbox-selected-focus-icon-color: var(--accent-text);
+        --mdc-checkbox-selected-hover-icon-color: var(--accent-text);
+        --mdc-checkbox-selected-icon-color: var(--accent-text);
+        --mdc-checkbox-selected-pressed-icon-color: var(--accent-text);
+        --mdc-checkbox-unselected-icon-color: var(--accent-text);
+        --mdc-checkbox-unselected-hover-icon-color: var(--accent-bg-subtle);
+        --mdc-checkbox-unselected-focus-icon-color: var(--accent-bg-subtle);
         padding: 0 !important;
         margin: 0 !important;
         width: 14px !important;
@@ -96,7 +96,7 @@
       }
 
       ::ng-deep .mdc-label {
-        color: white;
+        color: var(--accent-text);
         font-weight: 600;
         font-size: 10px;
         line-height: 1.4;
@@ -107,7 +107,7 @@
     }
 
     .chart-icon {
-      color: white;
+      color: var(--accent-text);
       font-size: 13px;
       width: 13px;
       height: 13px;
@@ -120,18 +120,18 @@
     align-items: center;
     gap: 6px;
     padding: 4px 12px;
-    background-color: #000000;
-    border: 1px solid #000000;
+    background-color: var(--accent-bg);
+    border: 1px solid var(--accent-bg);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 10px;
     font-weight: 600;
-    color: white;
+    color: var(--accent-text);
     font-family: inherit;
 
     &:hover:not(:disabled) {
-      background-color: #2F2F2F;
+      background-color: var(--accent-bg-hover);
     }
 
     &:disabled {
@@ -152,8 +152,8 @@
       min-width: 18px;
       height: 18px;
       padding: 0 5px;
-      background-color: #ffffff;
-      color: #000000;
+      background-color: var(--badge-count-bg);
+      color: var(--badge-count-text);
       border-radius: 9px;
       font-size: 10px;
       font-weight: 700;
@@ -173,16 +173,16 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background-color: white;
+  background-color: var(--bg-input);
   border-radius: 24px;
   padding: 8px 16px;
   border: 1px solid var(--border-color);
   box-shadow: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.3s ease;
   position: relative;
 
   &:focus-within {
-    border-color: #2F2F2F;
+    border-color: var(--border-input-focus);
   }
 }
 
@@ -195,14 +195,13 @@
   display: flex;
   align-items: center;
   padding: 8px 16px;
-  // Same padding as question-input inside the wrapper
-  padding-left: calc(16px + 12px); // wrapper padding + input padding
+  padding-left: calc(16px + 12px);
   font-size: 14px;
   font-family: inherit;
   white-space: pre;
   pointer-events: none;
   overflow: hidden;
-  color: #424242;
+  color: var(--highlight-text);
 
   ::ng-deep strong {
     font-weight: 700;
@@ -218,25 +217,30 @@
   background: transparent;
   font-size: 14px;
   color: transparent;
-  caret-color: #424242;
+  caret-color: var(--caret-color);
   padding: 8px 12px;
   font-family: inherit;
   position: relative;
   z-index: 1;
 
   &::placeholder {
-    color: #bdbdbd;
+    color: var(--text-placeholder);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  &.demo-readonly {
+    cursor: default;
+    color: var(--highlight-text);
+  }
 }
 
 .mic-button {
   flex-shrink: 0;
-  color: #424242;
+  color: var(--text-secondary);
 
   mat-icon {
     font-size: 24px;
@@ -252,23 +256,23 @@
 
 .send-button {
   flex-shrink: 0;
-  background-color: #000000;
-  color: white;
+  background-color: var(--accent-bg);
+  color: var(--accent-text);
   width: 48px;
   height: 48px;
   border-radius: 50%;
 
   mat-icon {
     transform: rotate(-45deg);
-    color: white;
+    color: var(--accent-text);
   }
 
   &:hover:not([disabled]) {
-    background-color: #2F2F2F;
+    background-color: var(--accent-bg-hover);
   }
 
   &:disabled {
     opacity: 0.3;
-    background-color: #CCCCCC;
+    background-color: var(--send-disabled);
   }
 }

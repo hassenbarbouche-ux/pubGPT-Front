@@ -50,7 +50,9 @@ export type StreamEventType =
   | 'orchestrator_plan'
   | 'orchestrator_reasoning'
   | 'orchestrator_task'
-  | 'orchestrator_synthesis';
+  | 'orchestrator_synthesis'
+  // Thinking stream events
+  | 'thinking_stream';
 
 /**
  * Interface pour les données d'événement Planner

@@ -117,13 +117,13 @@
   <div class="drawer-footer">
     <!-- Token Usage -->
     <div class="token-usage-section">
-      <div class="token-message" [class.quota-exceeded]="tokenStats?.quotaExceeded">
+      <div class="token-message" [class.quota-exceeded]="isDemoUser ? (demoTokenQuota > 0 && demoTokensUsed >= demoTokenQuota) : tokenStats?.quotaExceeded">
         {{ getTokenMessage() }}
       </div>
       <div class="token-bar-container">
         <div class="token-bar"
              [class]="getTokenBarColorClass()"
-             [style.width.%]="tokenStats?.usagePercentage || 0">
+             [style.width.%]="isDemoUser ? (demoTokenQuota > 0 ? (demoTokensUsed / demoTokenQuota) * 100 : 0) : (tokenStats?.usagePercentage || 0)">
         </div>
       </div>
     </div>
@@ -131,10 +131,10 @@
     <!-- User Info -->
     <div class="user-info" (click)="toggleUserMenu()">
       <div class="user-avatar">
-        <img src="/icons/remini.jpg" alt="Avatar" class="avatar-image">
+        <span class="avatar-initials">{{ getUserInitials() }}</span>
       </div>
       <div class="user-details">
-        <div class="user-access-badge">Full Access</div>
+        <div class="user-access-badge">{{ isDemoUser ? 'Demo' : 'Full Access' }}</div>
         <span class="user-email">{{ getUserLogin() }}</span>
       </div>
 

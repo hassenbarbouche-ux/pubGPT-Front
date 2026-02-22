@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import {
   ClarificationDialogComponent,
   ClarificationDialogData
 } from './components/clarification-dialog/clarification-dialog.component';
+import { OnboardingTourComponent } from './components/onboarding-tour/onboarding-tour.component';
 
 @Component({
   selector: 'app-chat',
@@ -27,19 +28,23 @@ import {
     InputBarComponent,
     ChatDrawerComponent,
     MatDialogModule,
-    ClarificationDialogComponent
+    ClarificationDialogComponent,
+    OnboardingTourComponent
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('chatDrawer') chatDrawer!: ChatDrawerComponent;
+  @ViewChild('onboardingTour') onboardingTour!: OnboardingTourComponent;
 
   messages: ChatMessage[] = [];
   isProcessing: boolean = false;
   sessionId: string | null = null;
   lastResponse: ChatResponse | null = null;
   isDrawerOpen: boolean = true; // Drawer ouvert par défaut
+  isDemoUser: boolean = false;
+  demoSelectedQuestion: string = '';
 
   private subscription?: Subscription;
 
@@ -67,11 +72,28 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.isDemoUser = this.authService.isDemoUser();
+
     // Optionnel: vérifier la santé du backend
     this.chatService.healthCheck().subscribe({
       next: (response) => console.log('Backend health:', response),
       error: (error) => console.error('Backend health check failed:', error)
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.authService.shouldShowTour) {
+      this.authService.shouldShowTour = false;
+      setTimeout(() => this.onboardingTour.start(), 600);
+    }
+  }
+
+  onTourCompleted(): void {
+    console.log('Onboarding tour completed');
+  }
+
+  onDemoQuestionSelect(question: string): void {
+    this.demoSelectedQuestion = question;
   }
 
   ngOnDestroy(): void {
@@ -174,14 +196,13 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         this.isProcessing = false;
 
-        // Refresh token stats and conversation list immediately after response
+        // Refresh token stats, quota, and conversation list immediately after response
         if (this.chatDrawer) {
           this.chatDrawer.refreshTokenStats();
-
-          // Refresh conversation list to show new/updated conversation
-          // This ensures the conversation appears in history with its title
           this.chatDrawer.loadConversations();
         }
+        // Rafraîchir le quota tokens pour les demo users
+        this.authService.refreshQuota();
       }
     });
   }
@@ -307,6 +328,17 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // Ignorer session_created et error
     if (event.step === 'session_created' || event.step === 'error') {
+      return;
+    }
+
+    // ========== Thinking stream events ==========
+    if (event.step === 'thinking_stream') {
+      if (event.data?.type === 'chunk') {
+        message.thinkingText = (message.thinkingText || '') + event.message;
+        message.isThinkingActive = true;
+      } else if (event.data?.type === 'complete') {
+        message.isThinkingActive = false;
+      }
       return;
     }
 
@@ -521,11 +553,12 @@ export class ChatComponent implements OnInit, OnDestroy {
         assistantMessage.isStreaming = false;
         this.isProcessing = false;
 
-        // Refresh token stats and conversation list
+        // Refresh token stats, quota, and conversation list
         if (this.chatDrawer) {
           this.chatDrawer.refreshTokenStats();
           this.chatDrawer.loadConversations();
         }
+        this.authService.refreshQuota();
       }
     });
   }

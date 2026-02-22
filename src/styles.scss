@@ -3,16 +3,176 @@
 // Import Material theme with blue prebuilt theme
 @import '@angular/material/prebuilt-themes/azure-blue.css';
 
-// Variables de couleurs globales - Thème ChatGPT
+// ==========================================
+// Theme CSS Variables
+// ==========================================
+
+// Light theme (default)
 :root {
-  --primary-black: #2F2F2F;
-  --light-gray: #F7F7F8;
-  --dark-black: #000000;
-  --user-bubble: #F7F7F8;
-  --bot-bubble: #FFFFFF;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAFAFA;
+  --bg-tertiary: #F7F7F8;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-hover-strong: rgba(0, 0, 0, 0.1);
+  --bg-input: #FFFFFF;
+  --bg-input-focus: #f5f5f5;
+
   --text-primary: #212121;
-  --text-secondary: #6E6E80;
+  --text-secondary: #616161;
+  --text-muted: #9e9e9e;
+  --text-placeholder: #bdbdbd;
+  --text-drawer: #202123;
+  --text-drawer-muted: #8E8EA0;
+
   --border-color: #E5E5E5;
+  --border-light: #e0e0e0;
+  --border-input-focus: #2F2F2F;
+
+  --accent-bg: #000000;
+  --accent-bg-hover: #2F2F2F;
+  --accent-text: #FFFFFF;
+  --accent-bg-subtle: #2F2F2F;
+
+  --user-bubble-bg: #000000;
+  --user-bubble-text: #FFFFFF;
+  --user-bubble-timestamp: #B0B0B0;
+  --bot-bubble-bg: #FFFFFF;
+  --bot-bubble-text: #424242;
+  --bot-bubble-shadow: rgba(0, 0, 0, 0.08);
+
+  --drawer-bg: #F7F7F8;
+  --drawer-active-bg: #000000;
+  --drawer-active-text: #FFFFFF;
+  --drawer-active-hover: #1a1a1a;
+  --drawer-menu-bg: #FFFFFF;
+  --drawer-menu-hover: #F7F7F8;
+
+  --checklist-bg: #FAFAFA;
+  --checklist-bar-track: #E0E0E0;
+  --checklist-bar-fill: #2F2F2F;
+  --checklist-pending-border: #D0D0D0;
+  --checklist-pending-text: #BDBDBD;
+  --checklist-active-color: #2F2F2F;
+  --checklist-done-text: #9E9E9E;
+  --checklist-connector: #D0D0D0;
+
+  --thinking-bg: #FFFFFF;
+  --thinking-border: #E8E8E8;
+  --thinking-shadow: rgba(0, 0, 0, 0.06);
+
+  --step-bg: #f5f5f5;
+  --step-border: #000000;
+  --step-text: #616161;
+
+  --shadow-sm: rgba(0, 0, 0, 0.05);
+  --shadow-md: rgba(0, 0, 0, 0.15);
+
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #888;
+  --scrollbar-thumb-hover: #555;
+
+  --send-disabled: #CCCCCC;
+  --caret-color: #424242;
+  --highlight-text: #424242;
+
+  --explanation-bg: #f5f5f5;
+  --explanation-border: #757575;
+  --explanation-text: #424242;
+
+  --badge-count-bg: #ffffff;
+  --badge-count-text: #000000;
+
+  --demo-quota-bg: #f5f5f5;
+
+  --avatar-bg: #000000;
+  --avatar-text: #FFFFFF;
+
+  --token-bar-normal: #2F2F2F;
+  --video-filter: none;
+}
+
+// Dark theme (soft neutral dark)
+body.dark-theme {
+  --bg-primary: #1e1e22;
+  --bg-secondary: #232327;
+  --bg-tertiary: #2a2a2f;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-hover-strong: rgba(255, 255, 255, 0.12);
+  --bg-input: #25252a;
+  --bg-input-focus: #2a2a2f;
+
+  --text-primary: #ededf0;
+  --text-secondary: #b5b5bc;
+  --text-muted: #78787f;
+  --text-placeholder: #58585f;
+  --text-drawer: #dadade;
+  --text-drawer-muted: #78787f;
+
+  --border-color: #3a3a40;
+  --border-light: #3a3a40;
+  --border-input-focus: #88888f;
+
+  --accent-bg: #ededf0;
+  --accent-bg-hover: #dadade;
+  --accent-text: #1e1e22;
+  --accent-bg-subtle: #b5b5bc;
+
+  --user-bubble-bg: #ededf0;
+  --user-bubble-text: #1e1e22;
+  --user-bubble-timestamp: #78787f;
+  --bot-bubble-bg: #2a2a2f;
+  --bot-bubble-text: #dadade;
+  --bot-bubble-shadow: rgba(255, 255, 255, 0.04);
+
+  --drawer-bg: #1e1e22;
+  --drawer-active-bg: #ededf0;
+  --drawer-active-text: #1e1e22;
+  --drawer-active-hover: #dadade;
+  --drawer-menu-bg: #2a2a2f;
+  --drawer-menu-hover: #323237;
+
+  --checklist-bg: #232327;
+  --checklist-bar-track: #3a3a40;
+  --checklist-bar-fill: #b5b5bc;
+  --checklist-pending-border: #48484f;
+  --checklist-pending-text: #58585f;
+  --checklist-active-color: #dadade;
+  --checklist-done-text: #78787f;
+  --checklist-connector: #48484f;
+
+  --thinking-bg: #2a2a2f;
+  --thinking-border: #3a3a40;
+  --thinking-shadow: rgba(255, 255, 255, 0.03);
+
+  --step-bg: #2a2a2f;
+  --step-border: #ededf0;
+  --step-text: #b5b5bc;
+
+  --shadow-sm: rgba(0, 0, 0, 0.2);
+  --shadow-md: rgba(0, 0, 0, 0.3);
+
+  --scrollbar-track: #232327;
+  --scrollbar-thumb: #48484f;
+  --scrollbar-thumb-hover: #68686f;
+
+  --send-disabled: #3a3a40;
+  --caret-color: #dadade;
+  --highlight-text: #dadade;
+
+  --explanation-bg: #2a2a2f;
+  --explanation-border: #68686f;
+  --explanation-text: #b5b5bc;
+
+  --badge-count-bg: #1e1e22;
+  --badge-count-text: #ededf0;
+
+  --demo-quota-bg: #2a2a2f;
+
+  --avatar-bg: #ededf0;
+  --avatar-text: #1e1e22;
+
+  --token-bar-normal: #b5b5bc;
+  --video-filter: invert(1) contrast(0.76);
 }
 
 html, body {
@@ -24,28 +184,30 @@ html, body {
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #FAFAFA;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-// Scrollbar personnalisé
+// Scrollbar personnalise
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--scrollbar-thumb-hover);
 }
 
-// Panel du dialog de sélection des colonnes - thème sombre
+// Panel du dialog de selection des colonnes - theme sombre
 .column-selector-dialog-panel {
   .mat-mdc-dialog-container,
   .mdc-dialog__surface {
@@ -54,7 +216,7 @@ body {
   }
 }
 
-// Panel du dialog de confirmation - thème sombre
+// Panel du dialog de confirmation - theme sombre
 .column-confirm-dialog-panel {
   .mat-mdc-dialog-container,
   .mdc-dialog__surface {

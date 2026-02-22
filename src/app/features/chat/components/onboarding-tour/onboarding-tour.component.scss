@@ -1,0 +1,426 @@
+// ── Overlay ──
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.tour-click-catcher {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+// ── Highlight cutout ──
+.tour-highlight {
+  position: fixed;
+  z-index: 10001;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.78);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+// ── Popup ──
+.tour-popup {
+  position: fixed;
+  z-index: 10002;
+  width: 360px;
+  background: #111113;
+  border: 1px solid #27272a;
+  border-radius: 14px;
+  padding: 24px;
+  animation: tourPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // Welcome step: larger popup
+  &[data-step="0"] {
+    width: 440px;
+
+    .tour-animation {
+      height: 130px;
+    }
+  }
+}
+
+@keyframes tourPopIn {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tour-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tour-step-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #52525b;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.tour-skip {
+  background: none;
+  border: none;
+  color: #52525b;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #a1a1aa;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ── Animation container ──
+.tour-animation {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.tour-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.tour-desc {
+  color: #a1a1aa;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0 0 20px;
+}
+
+.tour-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tour-btn-next {
+  background: #ffffff;
+  color: #0a0a0b;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e4e4e7;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// ═══════════════════════════════════════════
+// ANIMATIONS PER STEP
+// ═══════════════════════════════════════════
+
+// ── Step 1: Welcome logo ──
+:host ::ng-deep .anim-welcome {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+:host ::ng-deep .anim-welcome-rings {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+}
+
+:host ::ng-deep .anim-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+
+  &.r1 { animation: ringPulse 2.5s ease-in-out 0.3s infinite; }
+  &.r2 { inset: -18px; animation: ringPulse 2.5s ease-in-out 0.8s infinite; }
+  &.r3 { inset: -36px; animation: ringPulse 2.5s ease-in-out 1.3s infinite; }
+}
+
+@keyframes ringPulse {
+  0% { opacity: 0.5; transform: scale(0.97); }
+  50% { opacity: 0.15; transform: scale(1.04); }
+  100% { opacity: 0.5; transform: scale(0.97); }
+}
+
+:host ::ng-deep .anim-logo {
+  width: 160px;
+  position: relative;
+  z-index: 1;
+  animation: logoFade 0.8s ease-out 0.3s both;
+}
+
+:host ::ng-deep .anim-logo-pub {
+  animation: logoSlideL 0.6s ease-out 0.4s both;
+}
+
+:host ::ng-deep .anim-logo-gpt {
+  animation: logoSlideR 0.6s ease-out 0.5s both;
+}
+
+:host ::ng-deep .anim-welcome-tagline {
+  color: #52525b;
+  font-size: 0.65rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+  animation: logoFade 0.6s ease-out 0.8s both;
+}
+
+@keyframes logoFade { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes logoSlideL { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes logoSlideR { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+
+// ── Step 2: History lines + folder ──
+:host ::ng-deep .anim-history {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  width: 200px;
+}
+
+:host ::ng-deep .anim-hist-folder {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  animation: histFolder 0.5s ease-out 0.3s both;
+}
+
+:host ::ng-deep .anim-hist-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+:host ::ng-deep .anim-hist-line {
+  height: 8px;
+  background: #27272a;
+  border-radius: 4px;
+
+  &.l1 { width: 100%; animation: histLine 0.4s ease-out 0.5s both; }
+  &.l2 { width: 80%; animation: histLine 0.4s ease-out 0.7s both; }
+  &.l3 { width: 60%; animation: histLine 0.4s ease-out 0.9s both; }
+}
+
+@keyframes histLine { from { opacity: 0; transform: translateX(-20px); width: 0; } to { opacity: 1; transform: translateX(0); } }
+@keyframes histFolder { from { opacity: 0; transform: scale(0) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+
+// ── Step 3: Token bar ──
+:host ::ng-deep .anim-tokens {
+  width: 200px;
+}
+
+:host ::ng-deep .anim-token-bar-bg {
+  height: 10px;
+  background: #27272a;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+:host ::ng-deep .anim-token-bar-fill {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 5px;
+  width: 0;
+  animation: tokenFill 1.5s ease-out 0.4s forwards;
+}
+
+:host ::ng-deep .anim-token-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #52525b;
+}
+
+@keyframes tokenFill { to { width: 37%; } }
+
+// ── Step 4: Typing text ──
+:host ::ng-deep .anim-typing {
+  width: 240px;
+}
+
+:host ::ng-deep .anim-typing-box {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .anim-typing-text {
+  color: #fff;
+  font-size: 0.8rem;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: typeText 2s steps(28) 0.4s forwards;
+}
+
+:host ::ng-deep .anim-typing-cursor {
+  color: #fff;
+  animation: blink 0.6s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes typeText { to { width: 100%; } }
+@keyframes blink { 50% { opacity: 0; } }
+
+// ── Step 5: Columns ──
+:host ::ng-deep .anim-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 160px;
+}
+
+:host ::ng-deep .anim-col {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &.c1 { animation: colPop 0.3s ease-out 0.3s both; }
+  &.c2 { animation: colPop 0.3s ease-out 0.5s both; }
+  &.c3 { animation: colPop 0.3s ease-out 0.7s both; }
+}
+
+:host ::ng-deep .anim-col-check {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+@keyframes colPop { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+
+// ── Step 6: Explanation lines ──
+:host ::ng-deep .anim-explain {
+  width: 180px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+:host ::ng-deep .anim-expl-line {
+  height: 6px;
+  background: #27272a;
+  border-radius: 3px;
+
+  &.el1 { width: 100%; animation: explLine 0.4s ease-out 0.3s both; }
+  &.el2 { width: 85%; animation: explLine 0.4s ease-out 0.5s both; }
+  &.el3 { width: 70%; animation: explLine 0.4s ease-out 0.7s both; }
+}
+
+:host ::ng-deep .anim-expl-icon {
+  position: absolute;
+  right: -6px;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  animation: histFolder 0.5s ease-out 0.9s both;
+}
+
+@keyframes explLine { from { opacity: 0; width: 0; } to { opacity: 1; } }
+
+// ── Step 7: Bar chart ──
+:host ::ng-deep .anim-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 60px;
+}
+
+:host ::ng-deep .anim-bar {
+  width: 20px;
+  background: #ffffff;
+  border-radius: 3px 3px 0 0;
+
+  &.b1 { animation: barGrow 0.5s ease-out 0.3s both; --h: 30px; }
+  &.b2 { animation: barGrow 0.5s ease-out 0.4s both; --h: 50px; }
+  &.b3 { animation: barGrow 0.5s ease-out 0.5s both; --h: 38px; }
+  &.b4 { animation: barGrow 0.5s ease-out 0.6s both; --h: 58px; }
+  &.b5 { animation: barGrow 0.5s ease-out 0.7s both; --h: 42px; }
+}
+
+@keyframes barGrow { from { height: 0; } to { height: var(--h); } }
+
+// ── Step 8: Metric badges ──
+:host ::ng-deep .anim-metrics {
+  display: flex;
+  gap: 8px;
+}
+
+:host ::ng-deep .anim-badge {
+  background: #27272a;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.ab1 { animation: badgePop 0.35s ease-out 0.3s both; }
+  &.ab2 { animation: badgePop 0.35s ease-out 0.55s both; }
+  &.ab3 { animation: badgePop 0.35s ease-out 0.8s both; }
+}
+
+@keyframes badgePop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+
+// ── Step 9: Checkmark ──
+:host ::ng-deep .anim-ready {
+  text-align: center;
+}
+
+:host ::ng-deep .anim-checkmark {
+  width: 60px;
+  height: 60px;
+}
+
+:host ::ng-deep .anim-check-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: checkCircle 0.6s ease-out 0.3s forwards;
+}
+
+:host ::ng-deep .anim-check-tick {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: checkTick 0.4s ease-out 0.8s forwards;
+}
+
+@keyframes checkCircle { to { stroke-dashoffset: 0; } }
+@keyframes checkTick { to { stroke-dashoffset: 0; } }

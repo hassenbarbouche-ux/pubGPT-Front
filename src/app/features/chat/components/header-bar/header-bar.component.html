@@ -6,21 +6,11 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <!-- Full Access et Token Usage -->
-      <!-- <div class="access-token-section">
-        <div class="access-badge">
-          {{ userAccess }}
-        </div>
-
-        <div class="token-usage-wrapper">
-          <div class="token-message">
-            {{ getTokenUsageMessage() }}
-          </div>
-          <div class="token-bar-container">
-            <div class="token-bar" [style.width.%]="tokenUsagePercent" [style.background-color]="getTokenBarColor()"></div>
-          </div>
-        </div>
-      </div> -->
+      <!-- Demo quota badge -->
+      <div class="demo-quota" *ngIf="isDemoUser">
+        <span class="demo-badge">DEMO</span>
+        <span class="demo-stat">{{ formatTokens(tokensUsed) }} / {{ formatTokens(tokenQuota) }} tokens</span>
+      </div>
     </div>
 
     <div class="header-right">
@@ -82,6 +72,17 @@
       <div class="metric-badge">
         <mat-icon>schedule</mat-icon>
         <span>{{ executionTime !== null ? formatExecutionTime() : '--s' }}</span>
+      </div>
+
+      <!-- Theme Toggle -->
+      <div class="theme-switch-box" (click)="onToggleTheme()">
+        <mat-icon class="theme-icon" [class.active]="!isDarkTheme">light_mode</mat-icon>
+        <span class="theme-label" [class.active]="!isDarkTheme">Claire</span>
+        <div class="switch-track" [class.dark]="isDarkTheme">
+          <div class="switch-thumb"></div>
+        </div>
+        <span class="theme-label" [class.active]="isDarkTheme">Sombre</span>
+        <mat-icon class="theme-icon" [class.active]="isDarkTheme">dark_mode</mat-icon>
       </div>
     </div>
   </div>
