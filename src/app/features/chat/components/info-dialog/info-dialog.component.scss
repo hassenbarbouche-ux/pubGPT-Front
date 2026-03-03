@@ -1,10 +1,10 @@
+:host {
+  display: block;
+}
+
 .info-dialog {
   background: #0a0a0a;
   color: #e5e5e5;
-  margin: -24px;
-  padding: 0;
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 // Graph animation header
@@ -15,6 +15,7 @@
   opacity: 0.85;
 
   svg {
+    display: block;
     width: 100%;
     height: 100%;
   }
@@ -52,7 +53,7 @@
 }
 
 // Title
-h2 {
+.dialog-title {
   color: #ffffff;
   font-size: 24px;
   font-weight: 700;
@@ -62,10 +63,8 @@ h2 {
 }
 
 // Content
-mat-dialog-content {
-  min-width: 460px;
-  max-width: 560px;
-  padding: 12px 36px 24px 36px !important;
+.dialog-content {
+  padding: 12px 36px 24px 36px;
 }
 
 .info-section {
@@ -109,21 +108,25 @@ mat-dialog-content {
 }
 
 // Actions
-mat-dialog-actions {
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
   padding: 8px 36px 28px 36px;
 
   button {
-    background-color: #1a1a1a !important;
-    color: #d4d4d4 !important;
-    border: 1px solid #333 !important;
+    background-color: #1a1a1a;
+    color: #d4d4d4;
+    border: 1px solid #333;
     font-size: 13px;
+    padding: 8px 20px;
     border-radius: 6px;
+    cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-      background-color: #262626 !important;
-      border-color: #525252 !important;
-      color: #fff !important;
+      background-color: #262626;
+      border-color: #525252;
+      color: #fff;
     }
   }
 }

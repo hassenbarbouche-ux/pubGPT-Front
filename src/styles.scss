@@ -208,17 +208,40 @@ body {
 }
 
 // Panel du dialog de selection des colonnes - theme sombre
-// Panel du dialog info - theme sombre
+// Panel du dialog info - theme sombre, override total Material
 .info-dialog-panel {
-  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+
   .mdc-dialog__surface {
     background-color: #0a0a0a !important;
     border-radius: 12px !important;
     padding: 0 !important;
+    overflow: hidden !important;
   }
 
+  .mat-mdc-dialog-title {
+    padding: 0 !important;
+    margin: 0 !important;
+
+    &::before {
+      display: none !important;
+    }
+  }
+
+  .mat-mdc-dialog-content,
   .mdc-dialog__content {
     padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
   }
 }
 

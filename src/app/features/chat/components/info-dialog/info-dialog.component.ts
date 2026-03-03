@@ -1,17 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
 import { buildInfo } from '../../../../../environments/build-info';
 
 @Component({
   selector: 'app-info-dialog',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule
-  ],
+  imports: [CommonModule],
   templateUrl: './info-dialog.component.html',
   styleUrl: './info-dialog.component.scss'
 })
