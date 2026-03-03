@@ -1,56 +1,66 @@
 <div class="info-dialog">
-  <h2 mat-dialog-title>
-    <mat-icon>info_outline</mat-icon>
-    À propos de pubGPT
-  </h2>
+  <!-- Graph animation header -->
+  <div class="graph-animation">
+    <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#6366f1" stop-opacity="0" />
+          <stop offset="30%" stop-color="#6366f1" stop-opacity="1" />
+          <stop offset="70%" stop-color="#818cf8" stop-opacity="1" />
+          <stop offset="100%" stop-color="#818cf8" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3" />
+          <stop offset="100%" stop-color="#6366f1" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <!-- Area fill -->
+      <path class="graph-area" d="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20 L400,80 L0,80 Z" fill="url(#areaGrad)" />
+      <!-- Main line -->
+      <path class="graph-line" d="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" fill="none" stroke="url(#lineGrad)" stroke-width="2" />
+      <!-- Animated dot -->
+      <circle class="graph-dot" r="3" fill="#818cf8">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" />
+      </circle>
+      <!-- Pulse rings -->
+      <circle class="pulse-dot" r="2" fill="#6366f1" opacity="0.6">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" begin="0.3s" />
+      </circle>
+    </svg>
+  </div>
+
+  <h2 mat-dialog-title>pubGPT</h2>
 
   <mat-dialog-content>
     <div class="info-section">
       <div class="info-row">
-        <mat-icon class="row-icon">smart_toy</mat-icon>
-        <div>
-          <div class="label">Application</div>
-          <div class="value">pubGPT — Analytics TV publicitaire</div>
-        </div>
+        <div class="label">Application</div>
+        <div class="value">pubGPT — Analytics TV publicitaire</div>
       </div>
 
       <div class="info-row">
-        <mat-icon class="row-icon">description</mat-icon>
-        <div>
-          <div class="label">Description</div>
-          <div class="value">Système RAG qui convertit vos questions en langage naturel en requêtes SQL pour l'analyse des investissements publicitaires TV.</div>
-        </div>
+        <div class="label">Description</div>
+        <div class="value">Système RAG qui convertit vos questions en langage naturel en requêtes SQL pour l'analyse des investissements publicitaires TV.</div>
       </div>
 
       <div class="info-row">
-        <mat-icon class="row-icon">person</mat-icon>
-        <div>
-          <div class="label">Créé par</div>
-          <div class="value creator">Hassen Barbouche</div>
-        </div>
+        <div class="label">Créé par</div>
+        <div class="value creator">Hassen Barbouche</div>
       </div>
 
       <div class="info-row">
-        <mat-icon class="row-icon">update</mat-icon>
-        <div>
-          <div class="label">Dernière mise à jour</div>
-          <div class="value">{{ formattedDate }}</div>
-        </div>
+        <div class="label">Dernière mise à jour</div>
+        <div class="value">{{ formattedDate }}</div>
       </div>
 
       <div class="info-row" *ngIf="commitHash !== 'local'">
-        <mat-icon class="row-icon">tag</mat-icon>
-        <div>
-          <div class="label">Version</div>
-          <div class="value mono">{{ commitHash }}</div>
-        </div>
+        <div class="label">Version</div>
+        <div class="value mono">{{ commitHash }}</div>
       </div>
     </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-raised-button color="primary" (click)="close()">
-      Fermer
-    </button>
+    <button mat-raised-button (click)="close()">Fermer</button>
   </mat-dialog-actions>
 </div>

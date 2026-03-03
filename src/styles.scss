@@ -208,6 +208,15 @@ body {
 }
 
 // Panel du dialog de selection des colonnes - theme sombre
+// Panel du dialog info - theme sombre
+.info-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background-color: #0a0a0a !important;
+    border-radius: 12px !important;
+  }
+}
+
 .column-selector-dialog-panel {
   .mat-mdc-dialog-container,
   .mdc-dialog__surface {

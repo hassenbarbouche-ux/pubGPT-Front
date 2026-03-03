@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { buildInfo } from '../../../../../environments/build-info';
 
 @Component({
@@ -11,8 +10,7 @@ import { buildInfo } from '../../../../../environments/build-info';
   imports: [
     CommonModule,
     MatDialogModule,
-    MatButtonModule,
-    MatIconModule
+    MatButtonModule
   ],
   templateUrl: './info-dialog.component.html',
   styleUrl: './info-dialog.component.scss'

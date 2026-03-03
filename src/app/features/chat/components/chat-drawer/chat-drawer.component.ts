@@ -320,7 +320,8 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
   openInfoDialog(): void {
     this.dialog.open(InfoDialogComponent, {
       width: '520px',
-      autoFocus: false
+      autoFocus: false,
+      panelClass: 'info-dialog-panel'
     });
   }
 
