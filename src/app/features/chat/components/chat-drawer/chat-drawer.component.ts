@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -9,6 +10,7 @@ import { TokenService } from '../../../../core/services/token.service';
 import { ConversationService } from '../../../../core/services/conversation.service';
 import { TokenStats } from '../../../../core/models/token-stats.model';
 import { ConversationSummary } from '../../../../core/models/conversation.model';
+import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-chat-drawer',
@@ -52,7 +54,8 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private tokenService: TokenService,
     private conversationService: ConversationService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -312,6 +315,13 @@ export class ChatDrawerComponent implements OnInit, OnDestroy {
       this.projectSubmenuTimeout = null;
     }
     this.showProjectSubmenu = true;
+  }
+
+  openInfoDialog(): void {
+    this.dialog.open(InfoDialogComponent, {
+      width: '520px',
+      autoFocus: false
+    });
   }
 
   toggleProjectsList(): void {

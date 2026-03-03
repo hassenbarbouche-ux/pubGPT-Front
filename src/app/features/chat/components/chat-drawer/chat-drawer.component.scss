@@ -453,6 +453,30 @@
     }
   }
 
+  .info-button-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--text-drawer-muted);
+    font-size: 13px;
+
+    &:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-drawer);
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
   .user-info {
     position: relative;
     display: flex;

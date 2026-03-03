@@ -1,0 +1,56 @@
+<div class="info-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>info_outline</mat-icon>
+    À propos de pubGPT
+  </h2>
+
+  <mat-dialog-content>
+    <div class="info-section">
+      <div class="info-row">
+        <mat-icon class="row-icon">smart_toy</mat-icon>
+        <div>
+          <div class="label">Application</div>
+          <div class="value">pubGPT — Analytics TV publicitaire</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <mat-icon class="row-icon">description</mat-icon>
+        <div>
+          <div class="label">Description</div>
+          <div class="value">Système RAG qui convertit vos questions en langage naturel en requêtes SQL pour l'analyse des investissements publicitaires TV.</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <mat-icon class="row-icon">person</mat-icon>
+        <div>
+          <div class="label">Créé par</div>
+          <div class="value creator">Hassen Barbouche</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <mat-icon class="row-icon">update</mat-icon>
+        <div>
+          <div class="label">Dernière mise à jour</div>
+          <div class="value">{{ formattedDate }}</div>
+        </div>
+      </div>
+
+      <div class="info-row" *ngIf="commitHash !== 'local'">
+        <mat-icon class="row-icon">tag</mat-icon>
+        <div>
+          <div class="label">Version</div>
+          <div class="value mono">{{ commitHash }}</div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="close()">
+      Fermer
+    </button>
+  </mat-dialog-actions>
+</div>
