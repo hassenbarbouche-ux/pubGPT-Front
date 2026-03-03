@@ -4,14 +4,14 @@
     <svg viewBox="0 0 400 80" preserveAspectRatio="none">
       <defs>
         <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#6366f1" stop-opacity="0" />
-          <stop offset="30%" stop-color="#6366f1" stop-opacity="1" />
-          <stop offset="70%" stop-color="#818cf8" stop-opacity="1" />
-          <stop offset="100%" stop-color="#818cf8" stop-opacity="0" />
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+          <stop offset="30%" stop-color="#ffffff" stop-opacity="0.9" />
+          <stop offset="70%" stop-color="#e0e0e0" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#e0e0e0" stop-opacity="0" />
         </linearGradient>
         <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3" />
-          <stop offset="100%" stop-color="#6366f1" stop-opacity="0" />
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15" />
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
         </linearGradient>
       </defs>
       <!-- Area fill -->
@@ -19,11 +19,11 @@
       <!-- Main line -->
       <path class="graph-line" d="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" fill="none" stroke="url(#lineGrad)" stroke-width="2" />
       <!-- Animated dot -->
-      <circle class="graph-dot" r="3" fill="#818cf8">
+      <circle class="graph-dot" r="3" fill="#ffffff">
         <animateMotion dur="4s" repeatCount="indefinite" path="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" />
       </circle>
       <!-- Pulse rings -->
-      <circle class="pulse-dot" r="2" fill="#6366f1" opacity="0.6">
+      <circle class="pulse-dot" r="2" fill="#cccccc" opacity="0.5">
         <animateMotion dur="4s" repeatCount="indefinite" path="M0,60 Q30,55 60,50 T120,35 T180,45 T240,25 T300,30 T360,15 L400,20" begin="0.3s" />
       </circle>
     </svg>

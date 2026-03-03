@@ -214,6 +214,11 @@ body {
   .mdc-dialog__surface {
     background-color: #0a0a0a !important;
     border-radius: 12px !important;
+    padding: 0 !important;
+  }
+
+  .mdc-dialog__content {
+    padding: 0 !important;
   }
 }
 
