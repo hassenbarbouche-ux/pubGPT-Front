@@ -253,6 +253,15 @@ body {
   }
 }
 
+// Panel du dialog de configuration des colonnes - theme sombre
+.column-config-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background-color: #000000 !important;
+    border-radius: 12px !important;
+  }
+}
+
 // Panel du dialog de confirmation - theme sombre
 .column-confirm-dialog-panel {
   .mat-mdc-dialog-container,

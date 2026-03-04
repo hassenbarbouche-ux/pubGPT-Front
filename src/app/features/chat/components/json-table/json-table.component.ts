@@ -6,7 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CsvExportUtil } from '../../../../core/utils/csv-export.util';
+import { ColumnConfigDialogComponent, ColumnConfigItem, ColumnConfigResult } from './column-config-dialog.component';
 
 /**
  * Composant pour afficher des données JSON sous forme de tableau dynamique
@@ -15,7 +18,7 @@ import { CsvExportUtil } from '../../../../core/utils/csv-export.util';
 @Component({
   selector: 'app-json-table',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule, MatSortModule],
+  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule, MatSortModule, MatTooltipModule],
   templateUrl: './json-table.component.html',
   styleUrls: ['./json-table.component.scss']
 })
@@ -26,6 +29,9 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
 
   /** Set of column names (sans préfixe TABLE.) à mettre en surbrillance */
   private highlightedColumnNames: Set<string> = new Set();
+
+  /** Toutes les colonnes détectées (y compris masquées), pour le dialog de config */
+  allColumns: string[] = [];
 
   displayedColumns: string[] = [];
   displayedColumnsWithRowNumber: string[] = [];
@@ -40,6 +46,8 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
   // Tri manuel
   sortColumn: string | null = null;
   sortDirection: 'asc' | 'desc' | null = null;
+
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.prepareTableData();
@@ -100,6 +108,9 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
       } else {
         this.displayedColumns = allColumnsArray;
       }
+
+      // Sauvegarder toutes les colonnes pour le dialog de configuration
+      this.allColumns = [...this.displayedColumns];
 
       this.displayedColumnsWithRowNumber = ['rowNumber', ...this.displayedColumns];
     }
@@ -255,6 +266,40 @@ export class JsonTableComponent implements OnInit, AfterViewInit {
     console.log(`Export CSV: ${this.tableData.length} lignes exportées`);
   }
 
+  /**
+   * Ouvre le dialog de configuration des colonnes (visibilité + réordonnancement)
+   */
+  openColumnConfig(): void {
+    const columns: ColumnConfigItem[] = this.allColumns.map(key => ({
+      key,
+      label: this.formatColumnName(key),
+      visible: this.displayedColumns.includes(key),
+      highlighted: this.highlightedColumnNames.has(key)
+    }));
+
+    const dialogRef = this.dialog.open(ColumnConfigDialogComponent, {
+      data: { columns },
+      width: '450px',
+      panelClass: 'column-config-dialog-panel',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe((result: ColumnConfigResult | null) => {
+      if (result) {
+        this.displayedColumns = result.columns
+          .filter(c => c.visible)
+          .map(c => c.key);
+        this.displayedColumnsWithRowNumber = ['rowNumber', ...this.displayedColumns];
+        this.allColumns = result.columns.map(c => c.key);
+
+        if (this.sortColumn && this.sortDirection) {
+          this.applySorting();
+        } else {
+          this.updateVisibleData();
+        }
+      }
+    });
+  }
 
   /**
    * Tri manuel des données
