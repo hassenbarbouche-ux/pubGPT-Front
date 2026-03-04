@@ -1,0 +1,53 @@
+<div class="column-config-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>tune</mat-icon>
+    Configurer les colonnes
+  </h2>
+
+  <mat-dialog-content>
+    <p class="dialog-description">
+      Glissez pour réordonner et activez/désactivez les colonnes.
+      <span class="visible-count" *ngIf="visibleCount > 0">
+        ({{ visibleCount }} colonne{{ visibleCount > 1 ? 's' : '' }} visible{{ visibleCount > 1 ? 's' : '' }})
+      </span>
+    </p>
+
+    <div cdkDropList
+         class="column-list"
+         (cdkDropListDropped)="onDrop($event)">
+
+      <div *ngFor="let col of columns"
+           cdkDrag
+           class="column-row"
+           [class.column-row--hidden]="!col.visible">
+
+        <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
+
+        <span class="column-label">{{ col.label }}</span>
+
+        <mat-slide-toggle
+          [checked]="col.visible"
+          (change)="onToggle(col)"
+          class="column-toggle">
+        </mat-slide-toggle>
+
+        <div *cdkDragPlaceholder class="drag-placeholder"></div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" type="button">
+      Annuler
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      type="button"
+      [disabled]="visibleCount === 0">
+      <mat-icon>check</mat-icon>
+      Valider
+    </button>
+  </mat-dialog-actions>
+</div>

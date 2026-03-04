@@ -1,5 +1,15 @@
 <mat-card class="json-table-card">
   <mat-card-content>
+    <!-- Bouton de configuration des colonnes -->
+    <div class="table-toolbar">
+      <button mat-icon-button
+              class="column-config-button"
+              (click)="openColumnConfig()"
+              matTooltip="Configurer les colonnes">
+        <mat-icon>tune</mat-icon>
+      </button>
+    </div>
+
     <div class="table-container">
       <table class="custom-table">
         <thead>
